@@ -4,3 +4,4 @@ Werkzeug
 sarvamai
 twilio
 gunicorn
+Pillow

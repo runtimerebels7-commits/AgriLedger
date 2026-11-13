@@ -1,0 +1,352 @@
+
+{% extends "base.html" %}
+
+{% block title %}AgriLedger | Home{% endblock %}
+
+{% block content %}
+
+<!-- ================= HERO SECTION ================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="eyebrow" data-i18n="hero_eyebrow">
+            MULTILINGUAL • VOICE-FIRST • TRANSPARENT
+        </span>
+
+        <h1>
+            <span data-i18n="hero_title">
+                Agricultural Transactions
+            </span>
+
+            <span data-i18n="hero_subtitle">
+                Without Barriers.
+            </span>
+        </h1>
+
+        <p data-i18n="hero_description">
+            Understand every agreement. Know every deduction.
+            Track every payment. All in your preferred language.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="/login?role=farmer"
+               class="btn btn-green"
+               data-i18n="farmer_portal">
+                Farmer Portal →
+            </a>
+
+            <a href="/login?role=buyer"
+               class="btn btn-outline"
+               data-i18n="buyer_portal">
+                Buyer Portal →
+            </a>
+
+        </div>
+
+        <!-- HERO STATISTICS -->
+
+        <div class="hero-stats">
+
+            <div>
+                <h3 data-i18n="voice_first">
+                    Voice First
+                </h3>
+
+                <p data-i18n="speak_naturally">
+                    Speak naturally
+                </p>
+            </div>
+
+            <div>
+                <h3 data-i18n="transparent">
+                    Transparent
+                </h3>
+
+                <p data-i18n="clear_pricing">
+                    Clear pricing
+                </p>
+            </div>
+
+            <div>
+                <h3 data-i18n="digital">
+                    Digital
+                </h3>
+
+                <p data-i18n="verifiable_records">
+                    Verifiable records
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HERO ILLUSTRATIONS -->
+
+    <div class="hero-visual">
+
+        <!-- Three.js scene is decorative and does not affect application data -->
+        <div id="farm3dScene"
+             class="farm-3d-scene"
+             role="img"
+             aria-label="Three-dimensional AgriLedger farm">
+
+            <div class="farm-scene-loading">
+                <span class="farm-loading-icon">🌱</span>
+                <span>Loading farm visualization...</span>
+            </div>
+
+        </div>
+
+        <!-- FLOATING CARDS -->
+
+        <div class="floating-card card-one"
+             data-i18n="voice_transactions">
+
+            🎙 Voice Transactions
+
+        </div>
+
+        <div class="floating-card card-two"
+             data-i18n="agreement_review">
+
+            📄 Agreement Review
+
+        </div>
+
+        <div class="floating-card card-three"
+             data-i18n="price_transparency">
+
+            📊 Price Transparency
+
+        </div>
+
+        <div class="floating-card card-four"
+             data-i18n="payment_tracking">
+
+            💰 Payment Tracking
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FEATURES SECTION ================= -->
+
+<section class="features-section" id="features">
+
+    <div class="section-heading">
+
+        <span class="eyebrow"
+              data-i18n="our_features">
+
+            OUR FEATURES
+
+        </span>
+
+        <h2 data-i18n="everything_farmers_need">
+
+            Everything Farmers Need
+
+        </h2>
+
+        <p data-i18n="features_description">
+
+            Simple technology for transparent agricultural trade.
+
+        </p>
+
+    </div>
+
+
+    <!-- FEATURE CARDS -->
+
+    <div class="feature-grid">
+
+
+        <!-- FEATURE 1 -->
+
+        <article class="feature-card">
+
+            <span>🎙️</span>
+
+            <h3 data-i18n="feature_voice_title">
+
+                Voice Transactions
+
+            </h3>
+
+            <p data-i18n="feature_voice_description">
+
+                Create transaction details using your voice.
+
+            </p>
+
+        </article>
+
+
+        <!-- FEATURE 2 -->
+
+        <article class="feature-card">
+
+            <span>🌐</span>
+
+            <h3 data-i18n="feature_language_title">
+
+                Regional Languages
+
+            </h3>
+
+            <p data-i18n="feature_language_description">
+
+                Communicate in your preferred Indian language.
+
+            </p>
+
+        </article>
+
+
+        <!-- FEATURE 3 -->
+
+        <article class="feature-card">
+
+            <span>📄</span>
+
+            <h3 data-i18n="feature_agreement_title">
+
+                Agreement Explanation
+
+            </h3>
+
+            <p data-i18n="feature_agreement_description">
+
+                Understand complicated terms in simple language.
+
+            </p>
+
+        </article>
+
+
+        <!-- FEATURE 4 -->
+
+        <article class="feature-card">
+
+            <span>🔔</span>
+
+            <h3 data-i18n="feature_sms_title">
+
+                SMS Notifications
+
+            </h3>
+
+            <p data-i18n="feature_sms_description">
+
+                Receive transaction updates on your phone.
+
+            </p>
+
+        </article>
+
+
+        <!-- FEATURE 5 -->
+
+        <article class="feature-card">
+
+            <span>💰</span>
+
+            <h3 data-i18n="feature_payment_title">
+
+                Payment Tracking
+
+            </h3>
+
+            <p data-i18n="feature_payment_description">
+
+                See paid and pending transaction amounts.
+
+            </p>
+
+        </article>
+
+
+        <!-- FEATURE 6 -->
+
+        <article class="feature-card">
+
+            <span>🔊</span>
+
+            <h3 data-i18n="feature_audio_title">
+
+                Audio Assistance
+
+            </h3>
+
+            <p data-i18n="feature_audio_description">
+
+                Listen to important transaction details.
+
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ABOUT SECTION ================= -->
+
+<section class="about-section" id="about">
+
+    <div>
+
+        <span class="eyebrow"
+              data-i18n="about_eyebrow">
+
+            ABOUT AGRILEDGER
+
+        </span>
+
+
+        <h2 data-i18n="about_title">
+
+            Every Farmer Deserves Transparency
+
+        </h2>
+
+
+        <p data-i18n="about_description">
+
+            AgriLedger combines regional-language AI and
+            digital transaction records to make agricultural
+            trade easier to understand and verify.
+
+        </p>
+
+    </div>
+
+
+    <a href="/register"
+       class="btn btn-green"
+       data-i18n="get_started">
+
+        Get Started →
+
+    </a>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<!-- Three.js renderer for the homepage only -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<script src="{{ url_for('static', filename='js/farm-scene.js') }}"></script>
+{% endblock %}

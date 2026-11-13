@@ -1,0 +1,493 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#101b14">
+    <meta name="description"
+          content="AgriLedger - Multilingual agricultural transaction platform">
+
+    <title>{% block title %}AgriLedger{% endblock %}</title>
+
+    <!-- Premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Existing application stylesheet -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- AgriLedger premium visual theme -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/premium-theme.css') }}">
+
+    <style>
+        /* ==========================================
+           AGRILEDGER GLOBAL DESIGN SYSTEM
+        ========================================== */
+
+        :root {
+            --ag-bg: #101b14;
+            --ag-bg-deep: #0b1510;
+            --ag-surface: #1b2c21;
+            --ag-surface-light: #24382a;
+            --ag-border: rgba(194, 218, 184, 0.16);
+
+            --ag-text: #edf3e8;
+            --ag-muted: #b4c2b0;
+            --ag-green: #a5cd83;
+            --ag-green-dark: #285b3a;
+            --ag-gold: #d5bd8d;
+
+            --ag-radius: 18px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--ag-bg);
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            color: var(--ag-text);
+            background:
+                radial-gradient(
+                    ellipse at 80% 5%,
+                    rgba(100, 151, 81, 0.13),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    #101b14,
+                    #14251a 55%,
+                    #101a14
+                );
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Manrope", sans-serif;
+            color: var(--ag-text);
+        }
+
+        p {
+            color: var(--ag-muted);
+        }
+
+        button, input, select, textarea {
+            font-family: "DM Sans", sans-serif;
+        }
+
+        /* ==========================================
+           GLOBAL VOICE ASSISTANT
+        ========================================== */
+
+        #agriVoiceWidget {
+            position: fixed;
+            right: 24px;
+            bottom: 22px;
+            z-index: 9999;
+            font-family: "DM Sans", sans-serif;
+        }
+
+        #agriVoiceToggle {
+            border: 1px solid rgba(190, 222, 170, 0.25);
+            border-radius: 50px;
+            background: linear-gradient(
+                135deg,
+                #427a4b,
+                #245b39
+            );
+            color: #ffffff;
+            padding: 15px 23px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
+        }
+
+        #agriVoiceToggle:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(
+                135deg,
+                #518b58,
+                #2d6941
+            );
+            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+        }
+
+        #agriVoicePanel {
+            display: none;
+            width: 310px;
+            margin-bottom: 14px;
+            padding: 23px;
+
+            background: linear-gradient(
+                145deg,
+                rgba(35, 55, 41, 0.98),
+                rgba(18, 32, 23, 0.98)
+            );
+
+            border: 1px solid var(--ag-border);
+            border-radius: 20px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        #agriVoicePanel.open {
+            display: block;
+            animation: voicePanelIn 0.25s ease;
+        }
+
+        @keyframes voicePanelIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #agriVoicePanel h3 {
+            margin: 0 0 10px;
+            color: #edf3e8;
+            font-family: "Manrope", sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        #agriVoicePanel p {
+            color: #b4c2b0;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .agri-voice-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .agri-voice-controls button {
+            border: 1px solid rgba(194, 218, 184, 0.12);
+            border-radius: 10px;
+            padding: 12px 9px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+
+            background: #293e2e;
+            color: #eaf2e5;
+
+            transition: all 0.2s ease;
+        }
+
+        .agri-voice-controls button:hover {
+            background: #385a3d;
+            transform: translateY(-2px);
+        }
+
+        .agri-voice-controls #agriVoiceRead {
+            grid-column: span 2;
+            background: linear-gradient(
+                135deg,
+                #477f4e,
+                #285e3a
+            );
+            color: white;
+        }
+
+        .agri-voice-controls #agriVoiceStop {
+            background: rgba(125, 49, 49, 0.25);
+            color: #ffc5bd;
+            border-color: rgba(255, 150, 140, 0.18);
+        }
+
+        #agriVoiceStatus {
+            display: block;
+            margin-top: 15px;
+            color: #a5cd83;
+            font-size: 12px;
+            min-height: 18px;
+        }
+
+        /* ==========================================
+           ACCESSIBILITY AND RESPONSIVENESS
+        ========================================== */
+
+        :focus-visible {
+            outline: 2px solid #a5cd83;
+            outline-offset: 4px;
+        }
+
+        @media (max-width: 768px) {
+            #agriVoiceWidget {
+                right: 14px;
+                bottom: 14px;
+            }
+
+            #agriVoicePanel {
+                width: min(310px, calc(100vw - 40px));
+            }
+
+            #agriVoiceToggle {
+                padding: 13px 18px;
+                font-size: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <!-- Website Logo -->
+    <a href="/"
+       class="logo"
+       aria-label="AgriLedger Home">
+        🌱 AgriLedger
+    </a>
+
+    <!-- Navigation -->
+    <nav class="main-navigation">
+
+        <a href="/" data-i18n="home">
+            Home
+        </a>
+
+        <a href="/#features" data-i18n="features">
+            Features
+        </a>
+
+        <a href="/#about" data-i18n="about">
+            About
+        </a>
+
+        {% if session.get('user_id') %}
+
+            {% if session.get('role') == 'farmer' %}
+                <a href="/farmer" data-i18n="dashboard">
+                    Dashboard
+                </a>
+
+            {% elif session.get('role') == 'buyer' %}
+                <a href="/buyer" data-i18n="dashboard">
+                    Dashboard
+                </a>
+
+            {% elif session.get('role') == 'admin' %}
+                <a href="/admin" data-i18n="dashboard">
+                    Dashboard
+                </a>
+            {% endif %}
+
+            <a href="/government-schemes" data-i18n="schemes">
+                Government Schemes
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+    <!-- Right Navigation -->
+    <div class="nav-right">
+
+        <!-- Global Language Selector -->
+        <div class="language-selector">
+
+            <label for="globalLanguage"
+                   class="visually-hidden"
+                   data-i18n="selectLanguage">
+                Select Language
+            </label>
+
+            <select id="globalLanguage"
+                    name="language"
+                    aria-label="Select website language">
+
+                <option value="en-IN">English</option>
+                <option value="kn-IN">ಕನ್ನಡ</option>
+                <option value="hi-IN">हिन्दी</option>
+                <option value="ta-IN">தமிழ்</option>
+                <option value="te-IN">తెలుగు</option>
+                <option value="ml-IN">മലയാളം</option>
+                <option value="mr-IN">मराठी</option>
+                <option value="bn-IN">বাংলা</option>
+
+            </select>
+
+        </div>
+
+        <!-- Logged-in User -->
+        {% if session.get('user_id') %}
+
+            <span class="nav-username">
+                {{ session.get('username') }}
+            </span>
+
+            <a href="/logout"
+               class="btn btn-green"
+               data-i18n="logout">
+                Logout
+            </a>
+
+        {% else %}
+
+            <a href="/login"
+               class="btn btn-green"
+               data-i18n="login">
+                Login
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</header>
+
+
+<!-- Main Page Content -->
+<main id="main-content">
+
+    {% block content %}{% endblock %}
+
+</main>
+
+
+<!-- GLOBAL FARMER VOICE ASSISTANT -->
+<div id="agriVoiceWidget">
+
+    <div id="agriVoicePanel"
+         role="region"
+         aria-label="AgriLedger Voice Assistant">
+
+        <h3 data-i18n="voice_assistant_title">
+            🔊 Farmer Voice Assistant
+        </h3>
+
+        <p data-i18n="voice_assistant_description">
+            Listen to the information on this page
+            in your selected language.
+        </p>
+
+        <div class="agri-voice-controls">
+
+            <button type="button"
+                    id="agriVoiceRead"
+                    data-i18n="voice_read_page">
+                ▶ Read This Page
+            </button>
+
+            <button type="button"
+                    id="agriVoicePause"
+                    data-i18n="voice_pause">
+                ⏸ Pause
+            </button>
+
+            <button type="button"
+                    id="agriVoiceResume"
+                    data-i18n="voice_resume">
+                ▶ Resume
+            </button>
+
+            <button type="button"
+                    id="agriVoiceStop"
+                    data-i18n="voice_stop">
+                ⏹ Stop
+            </button>
+
+        </div>
+
+        <span id="agriVoiceStatus"
+              aria-live="polite"
+              data-i18n="voice_ready">
+            Ready to read.
+        </span>
+
+    </div>
+
+    <button type="button"
+            id="agriVoiceToggle"
+            aria-expanded="false"
+            aria-controls="agriVoicePanel"
+            aria-label="Listen to Page"
+            data-i18n="voice_listen_page">
+        🔊 Listen to Page
+    </button>
+
+</div>
+
+
+<!-- Footer -->
+<footer class="footer">
+
+    <h3>🌱 AgriLedger</h3>
+
+    <p data-i18n="tagline">
+        Your Transactions. Your Language. Your Rights.
+    </p>
+
+    <p data-i18n="footer_description">
+        Making agricultural trade transparent and accessible.
+    </p>
+
+    <div class="footer-links">
+
+        <a href="/" data-i18n="home">
+            Home
+        </a>
+
+        <a href="/#features" data-i18n="features">
+            Features
+        </a>
+
+        <a href="/#about" data-i18n="about">
+            About
+        </a>
+
+        <a href="/government-schemes" data-i18n="schemes">
+            Government Schemes
+        </a>
+
+    </div>
+
+    <small data-i18n="copyright">
+        © 2026 AgriLedger Hackathon Prototype
+    </small>
+
+</footer>
+
+
+<!-- Existing Main JavaScript -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

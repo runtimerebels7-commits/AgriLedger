@@ -1,0 +1,96 @@
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | AgriLedger{% endblock %}
+
+{% block content %}
+<div class="portal-layout">
+    <aside class="sidebar">
+        <h2 data-i18n="adminPortal">⚙ Admin Portal</h2>
+
+        <nav class="sidebar-nav">
+            <a class="active" href="/admin" data-i18n="overview">▦ Overview</a>
+            <a href="/admin" data-i18n="users">♙ Users</a>
+            <a href="/admin" data-i18n="transactions">📄 Transactions</a>
+            <a href="/admin" data-i18n="reports">📊 Reports</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>AgriLedger</strong>
+            <p data-i18n="adminPortalDescription">Agricultural transaction management.</p>
+        </div>
+    </aside>
+
+    <main class="dashboard-content">
+        <div class="dashboard-heading">
+            <div>
+                <span class="section-eyebrow" data-i18n="administration">ADMINISTRATION</span>
+                <h1 data-i18n="platformOverview">Platform Overview</h1>
+                <p data-i18n="monitorActivity">Monitor AgriLedger activity.</p>
+            </div>
+        </div>
+
+        <section class="dashboard-metrics">
+            <article class="metric-card">
+                <span>👨‍🌾</span>
+                <h2>{{ stats.farmers }}</h2>
+                <p data-i18n="registeredFarmers">Registered Farmers</p>
+            </article>
+
+            <article class="metric-card">
+                <span>🏪</span>
+                <h2>{{ stats.buyers }}</h2>
+                <p data-i18n="registeredBuyers">Registered Buyers</p>
+            </article>
+
+            <article class="metric-card">
+                <span>↔</span>
+                <h2>{{ stats.transactions }}</h2>
+                <p data-i18n="totalTransactions">Total Transactions</p>
+            </article>
+
+            <article class="metric-card">
+                <span>💰</span>
+                <h2>₹{{ stats.sales }}</h2>
+                <p data-i18n="transactionValue">Transaction Value</p>
+            </article>
+        </section>
+
+        <section class="dashboard-panel">
+            <h2 data-i18n="recentTransactions">Recent Transactions</h2>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="tableId">ID</th>
+                            <th data-i18n="crop">Crop</th>
+                            <th data-i18n="amount">Amount</th>
+                            <th data-i18n="status">Status</th>
+                            <th data-i18n="date">Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for t in recent %}
+                        <tr>
+                            <td>AGR-{{ t.id }}</td>
+                            <td>{{ t.crop_name }}</td>
+                            <td>₹{{ t.final_amount }}</td>
+                            <td>{{ t.status }}</td>
+                            <td>{{ t.created_at }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" data-i18n="noTransactionsFound">
+                                No transactions found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}

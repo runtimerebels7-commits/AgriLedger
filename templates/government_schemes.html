@@ -1,0 +1,476 @@
+
+{% extends "base.html" %}
+
+{% block title %}Government Schemes | AgriLedger{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/government_schemes.css') }}">
+
+<main class="schemes-page">
+
+    <!-- HERO -->
+    <section class="schemes-hero">
+        <div class="hero-content">
+            <span class="hero-label" data-i18n="gov_hero_label">
+                AGRICULTURAL GOVERNMENT SUPPORT
+            </span>
+
+            <h1 data-i18n="schemesTitle">
+                Government Schemes & Farmer Benefits
+            </h1>
+
+            <p data-i18n="schemesDescription">
+                Discover government schemes, financial assistance,
+                crop insurance and agricultural benefits available
+                to farmers across India.
+            </p>
+
+            <div class="hero-highlights">
+                <span data-i18n="allIndia">🇮🇳 All India Coverage</span>
+                <span data-i18n="officialLinks">Official Government Links</span>
+                <span data-i18n="regionalSupport">Regional Language Support</span>
+            </div>
+        </div>
+
+        <div class="hero-icon">🌾</div>
+    </section>
+
+
+    <!-- CATALOGUE NOTICE -->
+    <section class="catalogue-notice">
+        <div class="notice-icon">ℹ️</div>
+
+        <div>
+            <strong data-i18n="importantInformation">
+                Important Information
+            </strong>
+
+            <p data-i18n="schemeNotice">
+                Scheme eligibility, benefits and application deadlines
+                may change. Always verify details through the official portal.
+            </p>
+
+            <small>
+                <span data-i18n="catalogueChecked">Catalogue checked:</span>
+                <strong>{{ catalogue_status.checked_at }}</strong>
+                <span>·</span>
+                <strong>{{ catalogue_status.total_schemes }}</strong>
+                <span data-i18n="listedSchemes">listed schemes</span>
+            </small>
+        </div>
+    </section>
+
+
+    <!-- SEARCH AND FILTERS -->
+    <section class="schemes-search-section">
+
+        <div class="section-heading schemes-section-heading">
+            <span class="section-eyebrow" data-i18n="discoverBenefits">
+                DISCOVER BENEFITS
+            </span>
+
+            <h2 data-i18n="findScheme">
+                Find the Right Scheme
+            </h2>
+
+            <p data-i18n="searchSchemeDescription">
+                Search government schemes based on your needs.
+            </p>
+        </div>
+
+        <form method="GET"
+              action="{{ url_for('government_schemes.government_schemes_page') }}"
+              class="schemes-filter-form">
+
+            <div class="search-input-wrapper">
+                <span aria-hidden="true">🔍</span>
+
+                <input
+                    type="search"
+                    name="search"
+                    id="schemeSearch"
+                    placeholder="Search schemes, benefits or keywords..."
+                    data-i18n-placeholder="searchSchemes"
+                    value="{{ selected_search }}"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="filter-row">
+
+                <!-- CATEGORY -->
+                <select name="category" id="schemeCategory"
+                        aria-label="Select category">
+
+                    <option value=""
+                        {% if not selected_category %}selected{% endif %}
+                        data-i18n="allCategories">
+                        All Categories
+                    </option>
+
+                    {% for category in categories %}
+                    <option
+                        value="{{ category }}"
+                        {% if selected_category == category %}selected{% endif %}>
+                        {{ category }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+
+                <!-- STATE -->
+                <select name="state" id="schemeState"
+                        aria-label="Select state">
+
+                    <option value=""
+                        {% if not selected_state %}selected{% endif %}
+                        data-i18n="allStates">
+                        All States & UTs
+                    </option>
+
+                    {% for state_name in states %}
+                    <option
+                        value="{{ state_name }}"
+                        {% if selected_state == state_name %}selected{% endif %}>
+                        {{ state_name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+
+                <!-- GOVERNMENT LEVEL -->
+                <select name="level" id="schemeLevel"
+                        aria-label="Select government level">
+
+                    <option value=""
+                        {% if not selected_level %}selected{% endif %}
+                        data-i18n="allLevels">
+                        All Government Levels
+                    </option>
+
+                    <option value="central"
+                        {% if selected_level|lower == "central" %}selected{% endif %}
+                        data-i18n="centralGovernment">
+                        Central Government
+                    </option>
+
+                    <option value="state"
+                        {% if selected_level|lower == "state" %}selected{% endif %}
+                        data-i18n="stateGovernment">
+                        State Government
+                    </option>
+
+                    <option value="union territory"
+                        {% if selected_level|lower == "union territory" %}selected{% endif %}>
+                        Union Territory
+                    </option>
+
+                </select>
+
+
+                <button type="submit"
+                        class="filter-button"
+                        data-i18n="searchButton">
+                    Search Schemes
+                </button>
+
+                <a href="{{ url_for('government_schemes.government_schemes_page') }}"
+                   class="reset-button"
+                   data-i18n="reset">
+                    Reset
+                </a>
+
+            </div>
+        </form>
+    </section>
+
+
+    <!-- SCHEME RESULTS -->
+    <section class="schemes-results-section">
+
+        <div class="results-heading">
+            <div>
+                <span class="section-eyebrow" data-i18n="schemeDirectory">
+                    SCHEME DIRECTORY
+                </span>
+
+                <h2 data-i18n="availableSchemes">
+                    Available Schemes
+                </h2>
+            </div>
+
+            <span class="results-count">
+                {{ schemes|length }}
+                <span data-i18n="schemesFound">schemes found</span>
+            </span>
+        </div>
+
+
+        {% if schemes %}
+
+        <div class="schemes-grid">
+
+            {% for scheme in schemes %}
+
+            <article class="scheme-card"
+                     data-scheme-id="{{ scheme.id }}">
+
+                <!-- CATEGORY AND LEVEL -->
+                <div class="scheme-card-top">
+
+                    <span class="scheme-category">
+                        {{ scheme.category }}
+                    </span>
+
+                    <span class="scheme-level">
+                        {% if scheme.level|lower == "central" %}
+                            Central Government
+                        {% elif scheme.level|lower == "state" %}
+                            State Government
+                        {% else %}
+                            {{ scheme.level }}
+                        {% endif %}
+                    </span>
+
+                </div>
+
+
+                <!-- SCHEME NAME -->
+                <h3 class="scheme-name" data-scheme-translate>
+                    {{ scheme.name }}
+                </h3>
+
+
+                <!-- DESCRIPTION -->
+                <p class="scheme-description" data-scheme-translate>
+                    {{ scheme.description }}
+                </p>
+
+
+                <!-- BENEFITS -->
+                <div class="scheme-detail">
+                    <strong data-i18n="benefits">Benefits</strong>
+
+                    <p data-scheme-translate>
+                        {{ scheme.benefits }}
+                    </p>
+                </div>
+
+
+                <!-- ELIGIBILITY -->
+                <div class="scheme-detail">
+                    <strong data-i18n="eligibility">Eligibility</strong>
+
+                    <p data-scheme-translate>
+                        {{ scheme.eligibility }}
+                    </p>
+                </div>
+
+
+                <!-- REQUIRED DOCUMENTS
+                     IMPORTANT: documents is a string, not a list.
+                     Do not loop through it character by character.
+                -->
+                <div class="scheme-documents">
+
+                    <strong data-i18n="requiredDocuments">
+                        Commonly Required Documents
+                    </strong>
+
+                    <p data-scheme-translate>
+                        {{ scheme.documents }}
+                    </p>
+
+                </div>
+
+
+                <!-- VERIFICATION NOTE -->
+                {% if scheme.verification_note %}
+                <div class="scheme-verification-note">
+                    <strong>Important:</strong>
+
+                    <p data-scheme-translate>
+                        {{ scheme.verification_note }}
+                    </p>
+                </div>
+                {% endif %}
+
+
+                <!-- ACTION BUTTONS -->
+                <div class="scheme-card-footer">
+
+                    <button
+                        type="button"
+                        class="listen-button"
+                        data-scheme-id="{{ scheme.id }}"
+                        data-scheme-name="{{ scheme.name }}"
+                        data-scheme-description="{{ scheme.description }}"
+                        data-scheme-benefits="{{ scheme.benefits }}"
+                        data-scheme-eligibility="{{ scheme.eligibility }}"
+                        data-scheme-documents="{{ scheme.documents }}"
+                        data-i18n="listen">
+
+                        🔊 Listen
+
+                    </button>
+
+
+                    {% if scheme.official_link %}
+                    <a
+                        href="{{ scheme.official_link }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="official-link">
+
+                        <span data-i18n="officialWebsite">
+                            Official Website
+                        </span>
+                        ↗
+
+                    </a>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- OFFICIAL SOURCE -->
+                <div class="scheme-source">
+
+                    <span data-i18n="sourceLabel">Source:</span>
+
+                    <a
+                        href="{{ scheme.source_url or scheme.official_link }}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        {{ scheme.source_name }}
+
+                    </a>
+
+                </div>
+
+
+                <!-- LAST VERIFIED -->
+                {% if scheme.last_verified %}
+                <div class="scheme-last-verified">
+                    <span>Last catalogue review:</span>
+                    {{ scheme.last_verified }}
+                </div>
+                {% endif %}
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <!-- NO RESULTS -->
+        <div class="no-schemes">
+
+            <div class="no-schemes-icon">🔎</div>
+
+            <h3 data-i18n="noSchemes">
+                No schemes found
+            </h3>
+
+            <p data-i18n="noSchemesDescription">
+                Try changing your search keyword or selecting
+                a different category or state.
+            </p>
+
+            <a href="{{ url_for('government_schemes.government_schemes_page') }}"
+               class="filter-button"
+               data-i18n="viewAllSchemes">
+                View All Schemes
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- OFFICIAL GOVERNMENT SOURCES -->
+    <section class="official-sources-section">
+
+        <div class="section-heading schemes-section-heading">
+
+            <span class="section-eyebrow"
+                  data-i18n="trustedInformation">
+                TRUSTED INFORMATION
+            </span>
+
+            <h2 data-i18n="officialGovernmentPortals">
+                Official Government Portals
+            </h2>
+
+            <p data-i18n="officialPortalsDescription">
+                Verify scheme details and find government announcements
+                through these official sources.
+            </p>
+
+        </div>
+
+
+        <div class="sources-grid">
+
+            {% for source in sources %}
+
+            <a
+                href="{{ source.url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="source-card">
+
+                <div class="source-icon">🏛️</div>
+
+                <div>
+                    <h3>{{ source.name }}</h3>
+
+                    <span data-i18n="visitOfficialPortal">
+                        Visit Official Portal ↗
+                    </span>
+                </div>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- DISCLAIMER -->
+    <section class="schemes-disclaimer">
+
+        <strong data-i18n="disclaimer">
+            Disclaimer
+        </strong>
+
+        <p data-i18n="disclaimerDescription">
+            AgriLedger is an information platform and is not a
+            government authority. Scheme details shown here are
+            introductory summaries. Eligibility, application
+            availability, benefits and deadlines must be confirmed
+            through the relevant official government department.
+        </p>
+
+    </section>
+
+</main>
+
+
+<!-- Load the dedicated Government Schemes JavaScript only once -->
+<script src="{{ url_for('static', filename='js/government_schemes.js') }}"
+        defer></script>
+
+{% endblock %}

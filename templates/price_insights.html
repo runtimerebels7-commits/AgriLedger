@@ -1,0 +1,273 @@
+
+{% extends "base.html" %}
+
+{% block title %}Price Insights | AgriLedger{% endblock %}
+
+{% block content %}
+
+<style>
+.price-page {
+    max-width: 1150px;
+    margin: 40px auto;
+    padding: 25px;
+    color: #263328;
+}
+
+.price-hero {
+    background: linear-gradient(135deg, #173d2b, #39734b);
+    color: white;
+    padding: 40px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+}
+
+.price-hero h1 {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.price-hero p {
+    line-height: 1.7;
+    max-width: 700px;
+}
+
+.price-notice {
+    background: #fff7df;
+    border-left: 5px solid #e6ae32;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.price-search {
+    background: white;
+    padding: 25px;
+    border: 1px solid #e5e9e5;
+    border-radius: 14px;
+    margin-bottom: 25px;
+}
+
+.price-search label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.price-search input,
+.price-search select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ccd5cc;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 15px;
+}
+
+.price-search button {
+    background: #24613c;
+    color: white;
+    border: none;
+    padding: 13px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.price-search button:hover {
+    background: #17482b;
+}
+
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.price-card {
+    background: white;
+    border: 1px solid #e5e9e5;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+}
+
+.price-card h3 {
+    margin: 0 0 12px;
+    color: #315c3c;
+}
+
+.price-value {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.price-label {
+    color: #718071;
+    font-size: 13px;
+}
+
+.price-result {
+    margin-top: 25px;
+}
+
+.price-empty {
+    background: #f5f8f5;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.price-back {
+    display: inline-block;
+    margin-top: 25px;
+    color: #24613c;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+@media(max-width:600px) {
+    .price-page {
+        padding: 15px;
+    }
+
+    .price-hero {
+        padding: 25px;
+    }
+
+    .price-hero h1 {
+        font-size: 25px;
+    }
+}
+</style>
+
+<main class="price-page">
+
+    <section class="price-hero">
+        <h1>🌾 Agricultural Price Insights</h1>
+        <p>
+            Explore indicative agricultural selling prices,
+            compare crop prices and make more informed decisions
+            before entering into a transaction.
+        </p>
+    </section>
+
+    <div class="price-notice">
+        <strong>Important information:</strong>
+        The prices displayed here are sample estimates for
+        demonstration purposes. They are not live mandi prices
+        and should not be treated as official market quotations.
+    </div>
+
+    <section class="price-search">
+
+        <h2>Find Crop Price Information</h2>
+
+        <form method="GET" action="{{ url_for('price_insights') }}">
+
+            <label for="crop">Crop Name</label>
+
+            <input
+                type="text"
+                id="crop"
+                name="crop"
+                placeholder="Example: Tomato"
+                value="{{ selected_crop }}"
+                required
+            >
+
+            <label for="market">Market / Location</label>
+
+            <input
+                type="text"
+                id="market"
+                name="market"
+                placeholder="Example: Bengaluru"
+                value="{{ selected_market }}"
+            >
+
+            <button type="submit">
+                Search Price
+            </button>
+
+        </form>
+
+    </section>
+
+    <section class="price-result">
+
+        <h2>Price Information</h2>
+
+        {% if searched %}
+
+            {% if result %}
+
+                <div class="price-grid">
+
+                    <div class="price-card">
+                        <h3>{{ result.crop }}</h3>
+                        <span class="price-label">Selected Crop</span>
+                        <div class="price-value">{{ result.market }}</div>
+                        <span class="price-label">Selected Market</span>
+                    </div>
+
+                    <div class="price-card">
+                        <h3>Indicative Minimum</h3>
+                        <div class="price-value">
+                            ₹{{ result.min_price }}
+                        </div>
+                        <span class="price-label">Per quintal</span>
+                    </div>
+
+                    <div class="price-card">
+                        <h3>Indicative Average</h3>
+                        <div class="price-value">
+                            ₹{{ result.avg_price }}
+                        </div>
+                        <span class="price-label">Per quintal</span>
+                    </div>
+
+                    <div class="price-card">
+                        <h3>Indicative Maximum</h3>
+                        <div class="price-value">
+                            ₹{{ result.max_price }}
+                        </div>
+                        <span class="price-label">Per quintal</span>
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="price-empty">
+                    <h3>No sample price found</h3>
+                    <p>
+                        Try searching for Tomato, Onion, Potato,
+                        Rice or Wheat.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="price-empty">
+                <h3>Search for a crop to view its price information</h3>
+                <p>
+                    Enter a crop name and market location above.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    <a href="javascript:history.back()" class="price-back">
+        ← Back to Dashboard
+    </a>
+
+</main>
+
+{% endblock %}

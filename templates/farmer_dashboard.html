@@ -1,0 +1,831 @@
+
+{% extends "base.html" %}
+
+{% block title %}Farmer Dashboard | AgriLedger{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ==========================================
+   AGRILEDGER FARMER DASHBOARD
+   Premium forest-green visual theme
+========================================== */
+
+.portal-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    min-height: calc(100vh - 80px);
+    width: 100%;
+    background:
+        radial-gradient(ellipse at 80% 0%, rgba(91, 151, 83, .14), transparent 40%),
+        linear-gradient(135deg, #0b1710, #13251a 55%, #0c1912);
+    color: #f0f5eb;
+}
+
+/* SIDEBAR */
+
+.portal-layout .sidebar {
+    background: linear-gradient(180deg, #101f16, #0c1912);
+    border-right: 1px solid rgba(190, 218, 181, .14);
+    padding: 30px 18px;
+    min-width: 0;
+}
+
+.portal-layout .sidebar h2 {
+    font-family: "Manrope", sans-serif;
+    font-size: 21px;
+    font-weight: 800;
+    color: #edf4e8;
+    margin: 0 0 28px;
+}
+
+.portal-layout .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.portal-layout .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: #bdcbbb;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: all .25s ease;
+}
+
+.portal-layout .sidebar-nav a:hover {
+    color: #f3f7ef;
+    background: rgba(142, 186, 116, .10);
+    border-color: rgba(181, 220, 139, .16);
+    transform: translateX(3px);
+}
+
+.portal-layout .sidebar-nav a.active {
+    color: #f3f8ed;
+    background: linear-gradient(
+        110deg,
+        rgba(91, 148, 79, .35),
+        rgba(48, 91, 56, .18)
+    );
+    border: 1px solid rgba(170, 211, 137, .24);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .13);
+}
+
+.portal-layout .sidebar-footer {
+    margin-top: 45px;
+    padding: 18px 10px;
+    border-top: 1px solid rgba(190, 218, 181, .12);
+}
+
+.portal-layout .sidebar-footer strong {
+    color: #eaf2e5;
+    font-family: "Manrope", sans-serif;
+    font-size: 16px;
+}
+
+.portal-layout .sidebar-footer p {
+    color: #9eaf9c;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 7px;
+}
+
+/* MAIN CONTENT */
+
+.portal-layout .dashboard-content {
+    min-width: 0;
+    padding: 42px clamp(22px, 4vw, 62px);
+}
+
+.portal-layout .dashboard-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 34px;
+}
+
+.portal-layout .section-eyebrow {
+    display: inline-block;
+    color: #a9d17e;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.2px;
+    margin-bottom: 13px;
+}
+
+.portal-layout .dashboard-heading h1 {
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(28px, 3vw, 39px);
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    color: #f0f5eb;
+    margin: 0 0 13px;
+}
+
+.portal-layout .dashboard-heading p {
+    color: #afc0ad;
+    font-size: 15px;
+    line-height: 1.8;
+    margin: 4px 0;
+}
+
+.portal-layout .dashboard-heading strong {
+    color: #d8edc8;
+}
+
+.portal-layout .primary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 15px 22px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #4c8551, #28613c);
+    color: #fff;
+    border: 1px solid rgba(180, 218, 151, .25);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .22);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .25s ease;
+}
+
+.portal-layout .primary-action:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, .3);
+    background: linear-gradient(135deg, #5c965e, #34764a);
+}
+
+/* METRIC CARDS */
+
+.portal-layout .dashboard-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.portal-layout .metric-card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 25px 23px;
+    border-radius: 19px;
+    background: linear-gradient(
+        145deg,
+        rgba(34, 59, 42, .96),
+        rgba(19, 39, 28, .98)
+    );
+    border: 1px solid rgba(183, 215, 164, .17);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .18);
+    transition: transform .25s ease, border-color .25s ease;
+}
+
+.portal-layout .metric-card::after {
+    content: "";
+    position: absolute;
+    width: 125px;
+    height: 125px;
+    right: -58px;
+    top: -62px;
+    border-radius: 50%;
+    background: rgba(157, 201, 119, .08);
+    pointer-events: none;
+}
+
+.portal-layout .metric-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(181, 220, 139, .34);
+}
+
+.portal-layout .metric-icon {
+    font-size: 25px;
+    margin-bottom: 17px;
+}
+
+.portal-layout .metric-card h2 {
+    color: #eff6e9;
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(21px, 2vw, 27px);
+    font-weight: 800;
+    margin: 0 0 9px;
+    overflow-wrap: anywhere;
+}
+
+.portal-layout .metric-card p {
+    color: #b6c6b2;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 12px;
+}
+
+.portal-layout .metric-card a {
+    display: inline-block;
+    color: #b7dc91;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.portal-layout .metric-card a:hover {
+    color: #e1f1d2;
+}
+
+/* PANELS */
+
+.portal-layout .dashboard-panel {
+    padding: 27px;
+    margin-bottom: 24px;
+    border-radius: 20px;
+    background: linear-gradient(
+        145deg,
+        rgba(29, 49, 36, .96),
+        rgba(17, 34, 24, .98)
+    );
+    border: 1px solid rgba(190, 218, 181, .15);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, .18);
+}
+
+.portal-layout .panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.portal-layout .panel-heading h2 {
+    color: #edf4e8;
+    font-family: "Manrope", sans-serif;
+    font-size: 21px;
+    font-weight: 800;
+    margin: 0 0 7px;
+}
+
+.portal-layout .panel-heading p {
+    color: #aebead;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.portal-layout .panel-heading > a {
+    color: #b7dc91;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* QUICK ACTIONS */
+
+.portal-layout .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.portal-layout .quick-actions a {
+    display: flex;
+    align-items: center;
+    min-height: 55px;
+    padding: 15px 17px;
+    border-radius: 13px;
+    text-decoration: none;
+    color: #e8f2e2;
+    background: linear-gradient(
+        110deg,
+        rgba(105, 157, 88, .18),
+        rgba(54, 103, 63, .13)
+    );
+    border: 1px solid rgba(174, 210, 147, .14);
+    font-size: 13px;
+    font-weight: 700;
+    transition: all .25s ease;
+}
+
+.portal-layout .quick-actions a:hover {
+    background: linear-gradient(
+        110deg,
+        rgba(123, 178, 100, .30),
+        rgba(68, 122, 75, .22)
+    );
+    border-color: rgba(181, 220, 139, .32);
+    transform: translateY(-3px);
+}
+
+.portal-layout .quick-actions .government-action {
+    background: linear-gradient(
+        110deg,
+        rgba(174, 148, 86, .19),
+        rgba(117, 104, 58, .13)
+    );
+    border-color: rgba(218, 192, 132, .2);
+}
+
+/* TRANSACTION TABLE */
+
+.portal-layout .table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid rgba(190, 218, 181, .12);
+    border-radius: 14px;
+}
+
+.portal-layout .data-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+.portal-layout .data-table thead {
+    background: rgba(133, 174, 105, .13);
+}
+
+.portal-layout .data-table th {
+    color: #e0ebd8;
+    text-align: left;
+    padding: 16px 15px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(190, 218, 181, .16);
+}
+
+.portal-layout .data-table td {
+    color: #c3d0c0;
+    padding: 16px 15px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(190, 218, 181, .09);
+}
+
+.portal-layout .data-table tbody tr {
+    transition: background .2s ease;
+}
+
+.portal-layout .data-table tbody tr:hover {
+    background: rgba(143, 186, 116, .07);
+}
+
+.portal-layout .data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.portal-layout .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 11px;
+    border-radius: 50px;
+    color: #d5efbd;
+    background: rgba(105, 160, 83, .17);
+    border: 1px solid rgba(157, 202, 127, .2);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* GOVERNMENT FEATURE */
+
+.portal-layout .government-highlight {
+    background:
+        radial-gradient(circle at 90% 15%, rgba(177, 155, 99, .13), transparent 32%),
+        linear-gradient(145deg, #20382a, #15281d);
+    border-color: rgba(205, 187, 136, .19);
+}
+
+.portal-layout .government-icon {
+    font-size: 38px;
+    padding: 17px;
+    border-radius: 16px;
+    background: rgba(213, 189, 141, .1);
+    border: 1px solid rgba(213, 189, 141, .15);
+}
+
+/* RESPONSIVE LAYOUT */
+
+@media (max-width: 1100px) {
+    .portal-layout {
+        grid-template-columns: 215px minmax(0, 1fr);
+    }
+
+    .portal-layout .dashboard-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .portal-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-layout .sidebar {
+        padding: 16px;
+        border-right: none;
+        border-bottom: 1px solid rgba(190, 218, 181, .14);
+    }
+
+    .portal-layout .sidebar h2 {
+        margin-bottom: 13px;
+        font-size: 18px;
+    }
+
+    .portal-layout .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 7px;
+    }
+
+    .portal-layout .sidebar-nav a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .portal-layout .sidebar-footer {
+        display: none;
+    }
+
+    .portal-layout .dashboard-content {
+        padding: 28px 20px;
+    }
+
+    .portal-layout .dashboard-heading {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 520px) {
+    .portal-layout .dashboard-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-layout .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-layout .dashboard-panel {
+        padding: 19px;
+    }
+
+    .portal-layout .dashboard-heading h1 {
+        font-size: 28px;
+    }
+
+    .portal-layout .primary-action {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="portal-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2 data-i18n="farmerPortalTitle">🌱 Farmer Portal</h2>
+
+        <nav class="sidebar-nav">
+
+            <a href="/farmer" class="active" data-i18n="dashboard">
+                ▦ Dashboard
+            </a>
+
+            <a href="/transactions/new" data-i18n="newTransaction">
+                ＋ New Transaction
+            </a>
+
+            <a href="/agreements" data-i18n="agreements">
+                📄 Agreements
+            </a>
+
+            <a href="/payments" data-i18n="payments">
+                💰 Payments
+            </a>
+
+            <a href="/history" data-i18n="transactionHistory">
+                📊 Transaction History
+            </a>
+
+            <a href="/price-insights" data-i18n="priceInsights">
+                📈 Price Insights
+            </a>
+
+            <a href="{{ url_for('government_schemes.government_schemes_page') }}"
+               data-i18n="schemes">
+                🏛️ Government Schemes
+            </a>
+
+            <a href="/support" data-i18n="helpSupport">
+                🎧 Help & Support
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>AgriLedger</strong>
+            <p data-i18n="transparentTransactions">
+                Transparent agricultural transactions.
+            </p>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-content">
+
+        <!-- DASHBOARD HEADER -->
+        <div class="dashboard-heading">
+
+            <div>
+
+                <span class="section-eyebrow"
+                      data-i18n="farmerPortalLabel">
+                    FARMER PORTAL
+                </span>
+
+                <h1 data-i18n="farmerDashboard">
+                    Farmer Dashboard
+                </h1>
+
+                <p>
+                    <span data-i18n="welcome">Welcome</span>,
+                    <strong>{{ session.get('username', 'Farmer') }}</strong>!
+                </p>
+
+                <p data-i18n="farmerDashboardDescription">
+                    Manage your agricultural transactions,
+                    agreements and payments in one place.
+                </p>
+
+            </div>
+
+            <a href="/transactions/new"
+               class="primary-action"
+               data-i18n="createNewTransaction">
+                ＋ Create New Transaction
+            </a>
+
+        </div>
+
+
+        <!-- DASHBOARD METRICS -->
+        <section class="dashboard-metrics">
+
+            <article class="metric-card">
+
+                <div class="metric-icon">📋</div>
+
+                <h2>{{ transactions|length }}</h2>
+
+                <p data-i18n="totalTransactions">
+                    Total Transactions
+                </p>
+
+            </article>
+
+
+            <article class="metric-card">
+
+                <div class="metric-icon">💰</div>
+
+                <h2>
+                    ₹{{ "%.2f"|format(transactions|sum(attribute='final_amount')|float) }}
+                </h2>
+
+                <p data-i18n="totalTransactionValue">
+                    Total Transaction Value
+                </p>
+
+            </article>
+
+
+            <article class="metric-card">
+
+                <div class="metric-icon">📄</div>
+
+                <h2 data-i18n="agreements">
+                    Agreements
+                </h2>
+
+                <p data-i18n="reviewManageAgreements">
+                    Review and manage your agreements
+                </p>
+
+                <a href="/agreements" data-i18n="manageAgreements">
+                    Manage Agreements →
+                </a>
+
+            </article>
+
+
+            <article class="metric-card">
+
+                <div class="metric-icon">💳</div>
+
+                <h2 data-i18n="payments">
+                    Payments
+                </h2>
+
+                <p data-i18n="monitorPaymentRecords">
+                    Monitor your payment records
+                </p>
+
+                <a href="/payments" data-i18n="viewPayments">
+                    View Payments →
+                </a>
+
+            </article>
+
+        </section>
+
+
+        <!-- QUICK ACTIONS -->
+        <section class="dashboard-panel">
+
+            <div class="panel-heading">
+
+                <div>
+                    <h2 data-i18n="quickActions">
+                        Quick Actions
+                    </h2>
+
+                    <p data-i18n="quickActionsDescription">
+                        Access the services you need.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="quick-actions">
+
+                <a href="/transactions/new" data-i18n="createNewTransaction">
+                    🌾 Create New Transaction
+                </a>
+
+                <a href="/agreements" data-i18n="reviewAgreements">
+                    📄 Review Agreements
+                </a>
+
+                <a href="/payments" data-i18n="trackPayments">
+                    💰 Track Payments
+                </a>
+
+                <a href="/history" data-i18n="viewTransactionHistory">
+                    📊 View Transaction History
+                </a>
+
+                <a href="/price-insights" data-i18n="explorePriceInsights">
+                    📈 Explore Price Insights
+                </a>
+
+                <a href="/support" data-i18n="getHelpSupport">
+                    🎧 Get Help & Support
+                </a>
+
+                <a href="{{ url_for('government_schemes.government_schemes_page') }}"
+                   class="government-action"
+                   data-i18n="exploreGovernmentSchemes">
+                    🏛️ Explore Government Schemes
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT TRANSACTIONS -->
+        <section class="dashboard-panel">
+
+            <div class="panel-heading">
+
+                <div>
+                    <h2 data-i18n="recentTransactions">
+                        Recent Transactions
+                    </h2>
+
+                    <p data-i18n="recentTransactionsDescription">
+                        Review your latest agricultural transactions.
+                    </p>
+                </div>
+
+                <a href="/history" data-i18n="viewAll">
+                    View All →
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th data-i18n="transactionId">Transaction ID</th>
+                            <th data-i18n="crop">Crop</th>
+                            <th data-i18n="buyer">Buyer</th>
+                            <th data-i18n="quantity">Quantity</th>
+                            <th data-i18n="finalAmount">Final Amount</th>
+                            <th data-i18n="status">Status</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for t in transactions %}
+
+                        <tr>
+
+                            <td>AGR-{{ t.id }}</td>
+
+                            <td>{{ t.crop_name }}</td>
+
+                            <td>{{ t.buyer_name }}</td>
+
+                            <td>{{ t.quantity }} {{ t.unit }}</td>
+
+                            <td>₹{{ t.final_amount }}</td>
+
+                            <td>
+                                <span class="status-badge">
+                                    {{ t.status }}
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="6" data-i18n="noTransactions">
+                                No transactions found. Create your first transaction!
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- GOVERNMENT SCHEMES -->
+        <section class="dashboard-panel government-highlight">
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="section-eyebrow"
+                          data-i18n="farmerBenefits">
+                        FARMER BENEFITS
+                    </span>
+
+                    <h2 data-i18n="governmentSchemesSubsidies">
+                        Government Schemes & Subsidies
+                    </h2>
+
+                    <p data-i18n="governmentSchemesDescription">
+                        Explore central government agricultural
+                        schemes and official application portals.
+                    </p>
+
+                </div>
+
+                <div class="government-icon">🏛️</div>
+
+            </div>
+
+            <a href="{{ url_for('government_schemes.government_schemes_page') }}"
+               class="primary-action"
+               data-i18n="exploreGovernmentSchemes">
+                Explore Government Schemes →
+            </a>
+
+        </section>
+
+    </main>
+
+</div>
+
+{% endblock %}

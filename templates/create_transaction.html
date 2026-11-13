@@ -1,0 +1,346 @@
+
+{% extends "base.html" %}
+
+{% block title %}Transaction | AgriLedger{% endblock %}
+
+{% block content %}
+
+<main class="transaction-page">
+
+    {% if transaction %}
+
+    <!-- EXISTING TRANSACTION DETAILS -->
+
+    <section class="transaction-box">
+
+        <span class="eyebrow" data-i18n="transaction_record">
+            TRANSACTION RECORD
+        </span>
+
+        <h1>
+            <span data-i18n="transaction_number">Transaction</span>
+            AGR-{{ transaction.id }}
+        </h1>
+
+        <p data-i18n="review_before_confirming">
+            Review the details before confirming.
+        </p>
+
+        <div class="transaction-details">
+
+            <p><strong data-i18n="farmer_label">Farmer:</strong> {{ transaction.farmer_name }}</p>
+
+            <p><strong data-i18n="buyer_label">Buyer:</strong> {{ transaction.buyer_name }}</p>
+
+            <p><strong data-i18n="crop_label">Crop:</strong> {{ transaction.crop_name }}</p>
+
+            <p><strong data-i18n="quantity_label">Quantity:</strong> {{ transaction.quantity }} {{ transaction.unit }}</p>
+
+            <p><strong data-i18n="unit_price_label">Unit price:</strong> ₹{{ transaction.price_per_unit }}</p>
+
+            <p><strong data-i18n="gross_amount_label">Gross amount:</strong> ₹{{ transaction.gross_amount }}</p>
+
+            <p><strong data-i18n="deductions_label">Deductions:</strong> ₹{{ transaction.deductions }}</p>
+
+            <p>
+                <strong data-i18n="deduction_reason_label">Deduction reason:</strong>
+                {{ transaction.deduction_reason or 'Not specified' }}
+            </p>
+
+            <p><strong data-i18n="final_payable_label">Final payable:</strong> ₹{{ transaction.final_amount }}</p>
+
+            <p>
+                <strong data-i18n="payment_deadline_label">Payment deadline:</strong>
+                {{ transaction.payment_deadline or 'Not specified' }}
+            </p>
+
+            <p><strong data-i18n="status">Status:</strong> {{ transaction.status }}</p>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-green full"
+            data-speak="The crop is {{ transaction.crop_name }}. Quantity is {{ transaction.quantity }} {{ transaction.unit }}. Gross amount is {{ transaction.gross_amount }} rupees. Deductions are {{ transaction.deductions }} rupees. Final payable amount is {{ transaction.final_amount }} rupees."
+            data-i18n="read_transaction_aloud">
+            🔊 Read Transaction Aloud
+        </button>
+
+        {% if not transaction.farmer_confirmed or not transaction.buyer_confirmed %}
+
+        <form method="POST"
+              action="/transactions/{{ transaction.id }}/confirm">
+
+            <button type="submit"
+                    class="btn btn-green full"
+                    data-i18n="confirm_transaction">
+                Confirm Transaction
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <p class="success-message" data-i18n="both_parties_confirmed">
+            Both parties have confirmed this transaction.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+    {% else %}
+
+    <!-- CREATE NEW TRANSACTION -->
+
+    <section class="transaction-box">
+
+        <span class="eyebrow" data-i18n="agriledger_transactions">
+            AGRILEDGER TRANSACTIONS
+        </span>
+
+        <h1 data-i18n="create_new_transaction">
+            Create New Transaction
+        </h1>
+
+        <p data-i18n="transaction_intro">
+            Enter the agreed agricultural sale details.
+            Both parties can review and confirm the terms.
+        </p>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+
+        <!-- VOICE TRANSACTION ASSISTANT -->
+
+        <div class="voice-entry">
+
+            <h3 data-i18n="voice_transaction_assistant">
+                🎙 Voice Transaction Assistant
+            </h3>
+
+            <p data-i18n="voice_transaction_description">
+                Speak in your preferred regional language.
+                Sarvam AI converts your speech into text.
+            </p>
+
+            <!-- START RECORDING BUTTON -->
+
+            <button
+                type="button"
+                id="recordButton"
+                class="btn btn-green"
+                data-i18n="start_recording">
+
+                🎙 Start Recording
+
+            </button>
+
+            <!-- STOP RECORDING BUTTON -->
+
+            <button
+                type="button"
+                id="stopRecording"
+                class="btn btn-outline"
+                disabled
+                data-i18n="stop_recording">
+
+                ⏹ Stop Recording
+
+            </button>
+
+            <!-- RECORDING STATUS -->
+
+            <p id="recordStatus" data-i18n="microphone_ready">
+                Microphone is ready.
+            </p>
+
+            <!-- VOICE TRANSCRIPT -->
+
+            <label for="voiceTranscript" data-i18n="voice_transcript">
+                Voice Transcript
+            </label>
+
+            <textarea
+                id="voiceTranscript"
+                rows="3"
+                placeholder="Your spoken words appear here..."
+                data-i18n-placeholder="transcript_placeholder"></textarea>
+
+            <!-- USE TRANSCRIPT BUTTON -->
+
+            <button
+                type="button"
+                id="fillTransaction"
+                class="btn btn-outline"
+                data-i18n="use_transcript">
+
+                Use Transcript to Fill Form
+
+            </button>
+
+        </div>
+
+
+        <!-- TRANSACTION FORM -->
+
+        <form method="POST" action="/transactions/new">
+
+            {% if session.get('role') == 'buyer' %}
+
+                <label data-i18n="farmer_mobile_number">
+                    Farmer Mobile Number
+                </label>
+
+                <input
+                    type="tel"
+                    name="farmer_phone"
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                    placeholder="Enter farmer's 10-digit mobile number"
+                    data-i18n-placeholder="farmer_phone_placeholder"
+                    required
+                >
+
+            {% else %}
+
+                <label data-i18n="buyer_mobile_number">
+                    Buyer Mobile Number
+                </label>
+
+                <input
+                    type="tel"
+                    name="buyer_phone"
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                    placeholder="Enter buyer's 10-digit mobile number"
+                    data-i18n-placeholder="buyer_phone_placeholder"
+                    required
+                >
+
+            {% endif %}
+
+
+            <label data-i18n="crop_name">
+                Crop Name
+            </label>
+
+            <input
+                type="text"
+                name="crop_name"
+                id="cropName"
+                placeholder="Example: Tomato"
+                data-i18n-placeholder="crop_placeholder"
+                required
+            >
+
+
+            <label data-i18n="quantity">
+                Quantity
+            </label>
+
+            <input
+                type="number"
+                name="quantity"
+                id="txQuantity"
+                min="0.01"
+                step="0.01"
+                placeholder="Enter quantity"
+                data-i18n-placeholder="quantity_placeholder"
+                required
+            >
+
+
+            <label data-i18n="measurement_unit">
+                Measurement Unit
+            </label>
+
+            <select name="unit">
+                <option value="kg" data-i18n="kilogram">Kilogram (kg)</option>
+                <option value="quintal" data-i18n="quintal">Quintal</option>
+                <option value="tonne" data-i18n="tonne">Tonne</option>
+            </select>
+
+
+            <label data-i18n="price_per_unit">
+                Price Per Unit (₹)
+            </label>
+
+            <input
+                type="number"
+                name="price_per_unit"
+                id="txPrice"
+                min="0"
+                step="0.01"
+                placeholder="Enter price per unit"
+                data-i18n-placeholder="price_placeholder"
+                required
+            >
+
+
+            <label data-i18n="total_deductions">
+                Total Deductions (₹)
+            </label>
+
+            <input
+                type="number"
+                name="deductions"
+                id="txDeductions"
+                min="0"
+                step="0.01"
+                value="0"
+            >
+
+
+            <label data-i18n="deduction_explanation">
+                Deduction Explanation
+            </label>
+
+            <textarea
+                name="deduction_reason"
+                placeholder="Transportation, commission, loading charges..."
+                data-i18n-placeholder="deduction_placeholder"></textarea>
+
+
+            <label data-i18n="payment_deadline">
+                Payment Deadline
+            </label>
+
+            <input type="date" name="payment_deadline">
+
+
+            <!-- AUTOMATIC CALCULATION -->
+
+            <div class="calculation-box">
+
+                <span data-i18n="estimated_final_payable">
+                    Estimated Final Payable
+                </span>
+
+                <h2 id="txTotal">₹0.00</h2>
+
+            </div>
+
+
+            <!-- CREATE TRANSACTION BUTTON -->
+
+            <button
+                type="submit"
+                class="btn btn-green full"
+                data-i18n="create_transaction_button">
+
+                Create Transaction →
+
+            </button>
+
+        </form>
+
+    </section>
+
+    {% endif %}
+
+</main>
+
+{% endblock %}

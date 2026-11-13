@@ -1,0 +1,512 @@
+
+{% extends "base.html" %}
+
+{% block title %}Help & Support | AgriLedger{% endblock %}
+
+{% block extra_css %}
+<style>
+/* =========================================
+   AGRILEDGER — HELP & SUPPORT
+   Premium forest-green visual identity
+========================================= */
+
+.ag-support {
+    --support-text: #f3f6ed;
+    --support-muted: #bdcbbb;
+    --support-green: #b5dc8b;
+    --support-border: rgba(181,220,139,.19);
+
+    max-width: 1450px;
+    margin: 0 auto;
+    padding: 65px clamp(20px,5vw,75px) 90px;
+    color: var(--support-text);
+    background:
+        radial-gradient(ellipse at 85% 5%,rgba(100,160,91,.14),transparent 36%),
+        linear-gradient(145deg,#0b1911,#10251a 55%,#0a1710);
+    min-height: 85vh;
+    font-family: "DM Sans","Manrope",sans-serif;
+}
+
+.ag-support * {
+    box-sizing: border-box;
+}
+
+.ag-support-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 42px;
+    margin-bottom: 35px;
+    border: 1px solid var(--support-border);
+    border-radius: 25px;
+    background:
+        radial-gradient(circle at 90% 10%,rgba(145,190,109,.16),transparent 35%),
+        linear-gradient(135deg,#1c3526,#12251a);
+    box-shadow: 0 20px 55px rgba(0,0,0,.22);
+}
+
+.ag-support-eyebrow {
+    color: var(--support-green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.ag-support-hero h1 {
+    margin: 19px 0 13px;
+    color: #f5f7f0;
+    font-family: "Manrope","DM Sans",sans-serif;
+    font-size: clamp(32px,4vw,48px);
+    line-height: 1.16;
+    letter-spacing: -1.5px;
+    font-weight: 800;
+}
+
+.ag-support-hero p {
+    max-width: 730px;
+    color: #c3d0bd;
+    font-size: 16px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.ag-support-hero::after {
+    content: "🌱";
+    position: absolute;
+    right: 7%;
+    top: 20%;
+    font-size: clamp(65px,10vw,115px);
+    opacity: .17;
+    transform: rotate(-12deg);
+}
+
+/* GUIDE GRID */
+
+.ag-support-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 20px;
+}
+
+.ag-support-card {
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+    min-height: 220px;
+    border-radius: 20px;
+    background: linear-gradient(
+        145deg,
+        #203b2c,
+        #14291e
+    );
+    border: 1px solid rgba(181,220,139,.18);
+    box-shadow: 0 14px 35px rgba(0,0,0,.19);
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+.ag-support-card::before {
+    content: "";
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    right: -85px;
+    bottom: -95px;
+    border-radius: 50%;
+    background: rgba(157,201,119,.10);
+    transition: transform .35s ease;
+}
+
+.ag-support-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(181,220,139,.42);
+    box-shadow: 0 20px 42px rgba(0,0,0,.29);
+}
+
+.ag-support-card:hover::before {
+    transform: scale(1.5);
+}
+
+.ag-support-card-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 21px;
+}
+
+.ag-support-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 49px;
+    width: 49px;
+    height: 49px;
+    border-radius: 15px;
+    font-size: 23px;
+    background: rgba(157,201,119,.13);
+    border: 1px solid rgba(181,220,139,.19);
+}
+
+.ag-support-number {
+    color: #a9d17e;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.ag-support-card h2 {
+    color: #f2f6ed;
+    font-family: "Manrope","DM Sans",sans-serif;
+    font-size: 21px;
+    font-weight: 800;
+    margin: 0 0 13px;
+}
+
+.ag-support-card p {
+    color: #c2d0bd;
+    font-size: 14px;
+    line-height: 1.85;
+    margin: 0 0 13px;
+}
+
+.ag-support-card a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    color: #b9df91;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+.ag-support-card a:hover {
+    color: #eff8df;
+}
+
+/* BOTTOM HELP PANEL */
+
+.ag-support-contact {
+    margin-top: 28px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    flex-wrap: wrap;
+    border: 1px solid rgba(207,190,139,.22);
+    border-radius: 20px;
+    background:
+        radial-gradient(circle at 90% 50%,rgba(181,155,91,.12),transparent 35%),
+        linear-gradient(120deg,#263a29,#172b20);
+}
+
+.ag-support-contact h2 {
+    color: #f3f6ed;
+    font-size: 23px;
+    margin: 0 0 9px;
+    font-family: "Manrope","DM Sans",sans-serif;
+}
+
+.ag-support-contact p {
+    color: #c2cdbb;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.ag-support-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    border-radius: 50px;
+    background: linear-gradient(135deg,#4b8552,#245d3a);
+    border: 1px solid rgba(181,220,139,.3);
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,.23);
+    transition: .25s ease;
+}
+
+.ag-support-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,.3);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:760px) {
+    .ag-support {
+        padding: 35px 18px 65px;
+    }
+
+    .ag-support-hero {
+        padding: 28px 23px;
+    }
+
+    .ag-support-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ag-support-card {
+        min-height: auto;
+        padding: 25px;
+    }
+
+    .ag-support-contact {
+        padding: 25px;
+    }
+
+    .ag-support-button {
+        width: 100%;
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .ag-support-card,
+    .ag-support-button {
+        transition: none;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="ag-support">
+
+    <!-- PAGE INTRODUCTION -->
+    <section class="ag-support-hero">
+
+        <span class="ag-support-eyebrow">
+            AGRILEDGER SUPPORT
+        </span>
+
+        <h1>How Can We Help You?</h1>
+
+        <p>
+            Follow these simple guides to manage your agricultural
+            transactions confidently. Learn how to create transactions,
+            understand agreements, track payments and use AgriLedger.
+        </p>
+
+    </section>
+
+
+    <!-- HELP GUIDES -->
+    <section class="ag-support-grid">
+
+        <!-- GUIDE 1 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">🌱</div>
+                <span class="ag-support-number">GUIDE 01</span>
+            </div>
+
+            <h2>Getting Started</h2>
+
+            <p>
+                Register as a farmer or buyer using your mobile number,
+                password and preferred language. Log in to access
+                your personal dashboard.
+            </p>
+
+            <a href="/login">
+                Switch Account <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 2 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">🌾</div>
+                <span class="ag-support-number">GUIDE 02</span>
+            </div>
+
+            <h2>Creating a Transaction</h2>
+
+            <p>
+                Enter the other party's registered mobile number,
+                crop name, quantity, unit price and deductions.
+                Review the final payable amount before submitting.
+            </p>
+
+            <a href="/transactions/new">
+                Create Transaction <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 3 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">📄</div>
+                <span class="ag-support-number">GUIDE 03</span>
+            </div>
+
+            <h2>Understanding Agreements</h2>
+
+            <p>
+                Select an existing transaction and upload its
+                agreement. Review the available agreement details
+                before proceeding.
+            </p>
+
+            <a href="/agreements">
+                View Agreements <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 4 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">💰</div>
+                <span class="ag-support-number">GUIDE 04</span>
+            </div>
+
+            <h2>Tracking Payments</h2>
+
+            <p>
+                View your payment records and check the payment
+                status of your agricultural transactions.
+                Keep track of pending and completed payments.
+            </p>
+
+            <a href="/payments">
+                View Payments <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 5 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">📊</div>
+                <span class="ag-support-number">GUIDE 05</span>
+            </div>
+
+            <h2>Transaction History</h2>
+
+            <p>
+                Review previous transactions and access their
+                recorded details, including crop, quantity,
+                price and transaction status.
+            </p>
+
+            <a href="/history">
+                View Transaction History <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 6 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">📈</div>
+                <span class="ag-support-number">GUIDE 06</span>
+            </div>
+
+            <h2>Crop Price Insights</h2>
+
+            <p>
+                Search for crop price information using a crop name
+                and market location. Remember that displayed prices
+                are demonstration estimates, not live mandi quotations.
+            </p>
+
+            <a href="/price-insights">
+                Explore Price Insights <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 7 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">🏛️</div>
+                <span class="ag-support-number">GUIDE 07</span>
+            </div>
+
+            <h2>Government Schemes</h2>
+
+            <p>
+                Explore agricultural schemes, benefits,
+                eligibility information and official government
+                resources available to farmers.
+            </p>
+
+            <a href="/government-schemes">
+                Explore Schemes <span>→</span>
+            </a>
+
+        </article>
+
+
+        <!-- GUIDE 8 -->
+        <article class="ag-support-card">
+
+            <div class="ag-support-card-top">
+                <div class="ag-support-icon">🌐</div>
+                <span class="ag-support-number">GUIDE 08</span>
+            </div>
+
+            <h2>Regional Language Assistance</h2>
+
+            <p>
+                Select your preferred supported Indian language
+                using the language selector. Use available voice
+                assistance to listen to page information.
+            </p>
+
+            <a href="/">
+                Return to Homepage <span>→</span>
+            </a>
+
+        </article>
+
+    </section>
+
+
+    <!-- BOTTOM PANEL -->
+    <section class="ag-support-contact">
+
+        <div>
+            <h2>Need More Assistance?</h2>
+
+            <p>
+                Explore your dashboard and available AgriLedger
+                services for more information.
+            </p>
+        </div>
+
+        <a href="/farmer" class="ag-support-button">
+            Return to Dashboard →
+        </a>
+
+    </section>
+
+</main>
+
+{% endblock %}

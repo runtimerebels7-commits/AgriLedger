@@ -1,0 +1,647 @@
+
+/* AgriLedger Premium Forest UI — visual overrides only */
+:root{
+ --ag-bg:#0d1712;--ag-bg2:#14221a;--ag-surface:#18271e;--ag-surface2:#1e3025;
+ --ag-line:rgba(194,218,184,.14);--ag-text:#edf2e9;--ag-muted:#a7b4a5;
+ --ag-green:#9bc77b;--ag-green2:#6eaa68;--ag-accent:#d2b987;
+ --ag-shadow:0 18px 48px rgba(0,0,0,.28);--ag-radius:18px;
+}
+html{scroll-behavior:smooth;background:var(--ag-bg)}
+body{background:radial-gradient(ellipse at 78% 0%,rgba(80,122,70,.15),transparent 34%),var(--ag-bg)!important;color:var(--ag-text)!important;font-family:"DM Sans","Manrope",sans-serif!important}
+#main-content{min-height:70vh}
+.navbar{background:rgba(12,22,16,.94)!important;color:var(--ag-text)!important;border-bottom:1px solid var(--ag-line)!important;box-shadow:0 8px 28px rgba(0,0,0,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.logo{color:#e9f1e4!important}
+.navbar nav a,.nav-username{color:var(--ag-muted)!important}
+.navbar nav a:hover{color:var(--ag-green)!important}
+.nav-right select,#globalLanguage{background:#1b2b20!important;color:var(--ag-text)!important;border:1px solid var(--ag-line)!important}
+.nav-right select option{background:#17251c;color:#fff}
+.btn{transition:transform .25s,box-shadow .25s,border-color .25s}
+.btn-green{background:linear-gradient(135deg,#477d4c,#285d3b)!important;color:#f5f8f0!important;border:1px solid rgba(173,211,147,.28)!important;box-shadow:0 8px 24px rgba(26,75,42,.3)!important}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 13px 30px rgba(26,75,42,.4)!important}
+.btn-outline{background:rgba(255,255,255,.035)!important;color:var(--ag-text)!important;border:1px solid rgba(171,207,147,.4)!important}
+.btn-outline:hover{background:rgba(143,186,116,.1)!important}
+.hero{position:relative;isolation:isolate;min-height:650px;padding:76px 7%;grid-template-columns:minmax(0,1fr) minmax(420px,1fr);gap:32px;overflow:hidden;background:radial-gradient(ellipse at 78% 45%,rgba(88,139,74,.2),transparent 38%),linear-gradient(120deg,#101b14,#17291d 58%,#101a14)!important}
+.hero:before{content:"";position:absolute;z-index:-1;width:560px;height:560px;right:2%;top:8%;border:1px solid rgba(182,212,156,.08);border-radius:50%;box-shadow:0 0 0 42px rgba(182,212,156,.025),0 0 0 88px rgba(182,212,156,.018)}
+.hero .eyebrow,.eyebrow{color:var(--ag-green)!important;letter-spacing:2.2px}
+.hero h1{font-family:"Manrope","DM Sans",sans-serif;color:#f0f4eb!important;font-size:clamp(42px,5vw,66px);letter-spacing:-2px;line-height:1.08;font-weight:700}
+.hero h1 span{color:#eaf2e5!important}
+.hero-content>p{color:#b7c4b5!important;font-size:16px;max-width:560px}
+.hero-stats{gap:34px}.hero-stats h3{color:#e0ebd8!important}.hero-stats p{color:#91a18f!important}
+.hero-visual{height:480px;min-height:440px;position:relative;display:block;place-items:unset;overflow:visible;background:radial-gradient(ellipse at center,rgba(106,157,84,.13),transparent 68%)!important;box-shadow:none!important;border-radius:0!important}
+.hero-visual:before{content:"";position:absolute;inset:7% 5%;border-radius:50%;background:radial-gradient(ellipse,rgba(131,178,99,.12),transparent 68%);pointer-events:none}
+.farm-3d-scene{position:absolute;inset:0;width:100%;height:100%;min-height:400px;overflow:hidden;background:transparent!important;z-index:1;cursor:grab;touch-action:pan-y}
+.farm-3d-scene canvas{display:block;width:100%;height:100%;outline:0}
+.farm-scene-loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:var(--ag-muted);font-size:12px;letter-spacing:.04em}
+.farm-loading-icon{display:block;font-size:30px;margin-bottom:8px}
+.floating-card{z-index:3;background:rgba(27,43,32,.82)!important;color:#e7eee2!important;border:1px solid rgba(193,219,178,.17)!important;border-radius:999px!important;box-shadow:0 12px 34px rgba(0,0,0,.22)!important;backdrop-filter:blur(15px);font-weight:600}
+.card-one{top:8%;right:-1%}.card-two{top:34%;right:-5%}.card-three{top:61%;right:-1%}.card-four{bottom:4%;left:0;right:auto}
+.features-section{padding:82px 7%;background:#101a14!important}
+.section-heading h2,.features-section h2,.about-section h2{color:#edf3e8!important}
+.section-heading p,.feature-card p,.about-section p{color:var(--ag-muted)!important}
+.feature-grid{gap:18px}
+.feature-card{background:linear-gradient(145deg,rgba(34,52,39,.94),rgba(22,36,27,.98))!important;border:1px solid var(--ag-line)!important;border-radius:18px!important;box-shadow:var(--ag-shadow)!important;color:var(--ag-text)!important;transition:transform .3s,border-color .3s,background .3s}
+.feature-card:hover{transform:translateY(-5px);border-color:rgba(159,202,129,.35)!important;background:linear-gradient(145deg,#263d2c,#1a2b20)!important}
+.feature-card h3{color:#eaf1e5!important}
+.about-section{background:linear-gradient(120deg,#1c3022,#14231a)!important;border:1px solid var(--ag-line);border-radius:22px!important;box-shadow:var(--ag-shadow)}
+.footer{background:#0a130e!important;border-top:1px solid var(--ag-line)!important;color:var(--ag-muted)!important}
+.footer h3{color:#eaf1e5!important}.footer a{color:var(--ag-muted)!important}.footer a:hover{color:var(--ag-green)!important}
+/* Actual dashboard selectors from this project's templates */
+.portal{background:var(--ag-bg)!important;grid-template-columns:245px minmax(0,1fr)}
+.sidebar{background:#111e16!important;border-right:1px solid var(--ag-line)!important}
+.sidebar h3{color:#e5eee0!important}
+.sidebar a{color:#aab8a8!important;border:1px solid transparent;transition:.22s}
+.sidebar a:hover{background:rgba(143,186,116,.09)!important;color:#f0f5ec!important;border-color:var(--ag-line)}
+.sidebar a.active{background:linear-gradient(105deg,rgba(83,135,76,.42),rgba(55,91,58,.2))!important;color:#f0f6e9!important;border:1px solid rgba(157,198,128,.22);box-shadow:none!important}
+.dash{background:transparent!important;color:var(--ag-text)!important}
+.dash-head h1{color:#edf3e8!important}.dash-head p,.muted{color:var(--ag-muted)!important}
+.metrics article,.panel,.transaction-box,.scheme-card,.insight-card,.price-card,.auth-card{background:linear-gradient(145deg,#1d3024,#16251c)!important;color:var(--ag-text)!important;border:1px solid var(--ag-line)!important;border-radius:var(--ag-radius)!important;box-shadow:var(--ag-shadow)!important}
+.metrics article b,.metrics article h2,.metrics article h3{color:#e9f2e3!important}
+.metrics article small,.panel p,.panel small,.panel label{color:var(--ag-muted)!important}
+.panel h2,.panel h3,.panel h4{color:#e9f1e5!important}
+table{color:var(--ag-text)!important;background:transparent!important}
+thead,th{background:rgba(130,170,105,.1)!important;color:#dce9d5!important}
+td{color:#bdc9b9!important;border-color:var(--ag-line)!important}
+tbody tr:hover{background:rgba(145,185,117,.06)!important}
+input:not([type=checkbox]):not([type=radio]),select,textarea{background:#17271d!important;color:#edf3e8!important;border:1px solid var(--ag-line)!important}
+input::placeholder,textarea::placeholder{color:#819181!important}
+.status-badge,.badge{border-radius:999px}
+#agriVoicePanel{background:#17271d!important;color:var(--ag-text)!important;border:1px solid var(--ag-line)!important}
+#agriVoicePanel h3{color:#edf3e8!important}#agriVoicePanel p,#agriVoiceStatus{color:var(--ag-muted)!important}
+#agriVoiceToggle{background:linear-gradient(135deg,#477d4c,#285d3b)!important;border:1px solid rgba(173,211,147,.25)}
+#agriVoicePanel button{border:1px solid var(--ag-line)!important}
+.auth-container{background:radial-gradient(circle at 15% 20%,rgba(89,139,75,.13),transparent 35%),var(--ag-bg)!important}
+.auth-card{color:var(--ag-text)!important}.auth-card h1{color:#edf3e8!important}.auth-card>p,.auth-bottom{color:var(--ag-muted)!important}
+@media(max-width:1000px){.hero{grid-template-columns:1fr 1fr;padding:58px 5%;gap:16px}.hero-visual{height:400px}.portal{grid-template-columns:210px minmax(0,1fr)}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.hero{grid-template-columns:1fr;padding:48px 6%;min-height:auto}.hero-visual{height:370px;min-height:340px}.farm-3d-scene{min-height:340px}.floating-card{font-size:10px;padding:9px 12px}.card-two{right:0}.portal{grid-template-columns:1fr}.sidebar{display:flex;overflow-x:auto;gap:6px;padding:12px;border-right:0!important;border-bottom:1px solid var(--ag-line)}.sidebar h3{display:none}.sidebar a{white-space:nowrap;flex:0 0 auto}.dash{padding:22px 5%}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:1fr 1fr}.about-section{margin:0 5% 35px;padding:25px;flex-direction:column;align-items:flex-start}}
+@media(max-width:460px){.metrics{grid-template-columns:1fr}.feature-grid{grid-template-columns:1fr}.hero h1{font-size:39px}.hero-visual{height:320px}.farm-3d-scene{min-height:300px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* ==========================================================
+   AGRILEDGER VISUAL CORRECTIONS — HIGH CONTRAST / PORTALS
+   Visual-only overrides. No routes, data, forms or workflows.
+========================================================== */
+:root {
+  --ag-bg: #07130f;
+  --ag-bg2: #0d1d16;
+  --ag-surface: #12271d;
+  --ag-surface2: #193326;
+  --ag-line: rgba(190, 218, 181, .18);
+  --ag-text: #f3f6ef;
+  --ag-muted: #b4c3b5;
+  --ag-green: #b5dc8b;
+  --ag-green2: #83bd70;
+  --ag-accent: #dfc58d;
+}
+
+html, body { background-color: #07130f !important; color: #f3f6ef !important; }
+body {
+  background-image:
+    radial-gradient(ellipse at 82% 4%, rgba(80, 150, 91, .19), transparent 34%),
+    radial-gradient(ellipse at 8% 48%, rgba(38, 103, 69, .13), transparent 42%),
+    linear-gradient(135deg, #07130f 0%, #0b1c14 52%, #08150f 100%) !important;
+}
+
+/* Keep the farmer/buyer/admin portal aligned and prevent clipped sidebar text. */
+.portal {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow-x: clip !important;
+  grid-template-columns: 240px minmax(0, 1fr) !important;
+}
+.portal > .sidebar {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: auto !important;
+  padding: 24px 16px !important;
+  overflow: visible !important;
+}
+.portal > .sidebar h3,
+.portal > .sidebar a {
+  margin-left: 0 !important;
+  text-indent: 0 !important;
+  transform: none !important;
+  overflow-wrap: anywhere;
+}
+.portal > .sidebar a { display: block; width: 100%; box-sizing: border-box; }
+.portal > .dash { min-width: 0 !important; width: auto !important; box-sizing: border-box !important; }
+
+/* Dashboard cards: force a coherent dark surface and readable typography. */
+.dash .metrics > *,
+.dash .metrics article,
+.dash .panel,
+.dash .transaction-box,
+.dash .insight-card,
+.dash .price-card,
+.dash .quick-actions,
+.dash .quick-action,
+.dash .action-card,
+.dash .dashboard-card,
+.dash .stat-card,
+.dash .guide-card,
+.dash .help-card,
+.dash .support-card,
+.dash .step-card {
+  background: linear-gradient(145deg, #1a3528 0%, #12271d 100%) !important;
+  color: #f0f5ec !important;
+  border: 1px solid rgba(181, 220, 139, .19) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .22) !important;
+}
+.dash .metrics article *,
+.dash .panel *,
+.dash .quick-actions *,
+.dash .quick-action *,
+.dash .action-card *,
+.dash .dashboard-card *,
+.dash .stat-card *,
+.dash .guide-card *,
+.dash .help-card *,
+.dash .support-card *,
+.dash .step-card * {
+  color: inherit;
+}
+.dash .metrics article h1,
+.dash .metrics article h2,
+.dash .metrics article h3,
+.dash .metrics article strong,
+.dash .panel h1,
+.dash .panel h2,
+.dash .panel h3,
+.dash .panel h4,
+.dash .quick-actions h1,
+.dash .quick-actions h2,
+.dash .quick-actions h3 {
+  color: #f3f7ee !important;
+}
+.dash .metrics article p,
+.dash .metrics article small,
+.dash .panel p,
+.dash .panel small,
+.dash .panel label,
+.dash .quick-actions p,
+.dash .quick-actions small {
+  color: #bdcbbb !important;
+}
+.dash .quick-actions a,
+.dash .quick-action a,
+.dash .action-card a {
+  color: #e8f2df !important;
+  background: rgba(126, 178, 105, .13) !important;
+  border: 1px solid rgba(181, 220, 139, .15) !important;
+}
+
+/* Government scheme cards and their nested benefit/eligibility panels. */
+.scheme-card {
+  background: linear-gradient(145deg, #1b3528, #10251b) !important;
+  color: #f1f5ed !important;
+}
+.scheme-card h1, .scheme-card h2, .scheme-card h3,
+.scheme-card h4, .scheme-card strong, .scheme-card b {
+  color: #f1f6ed !important;
+}
+.scheme-card p, .scheme-card li, .scheme-card span {
+  color: #bdcbbb;
+}
+.scheme-card > div:not(:first-child),
+.scheme-card .scheme-detail,
+.scheme-card .scheme-section,
+.scheme-card .benefit-box,
+.scheme-card .eligibility-box,
+.scheme-card .document-box,
+.scheme-card .detail-card,
+.scheme-card .info-box {
+  background: linear-gradient(145deg, #203d2e, #172e22) !important;
+  color: #eaf2e5 !important;
+  border: 1px solid rgba(181, 220, 139, .15) !important;
+  border-radius: 14px !important;
+}
+.scheme-card > div:not(:first-child) p,
+.scheme-card > div:not(:first-child) li,
+.scheme-card > div:not(:first-child) span,
+.scheme-card .scheme-detail p,
+.scheme-card .scheme-section p,
+.scheme-card .benefit-box p,
+.scheme-card .eligibility-box p,
+.scheme-card .document-box p {
+  color: #c5d2c1 !important;
+}
+
+/* Help & support guide panels: avoid pale text on white cards. */
+.help-card, .support-card, .guide-card, .step-card,
+.help-content, .support-guide, .instruction-card {
+  background: linear-gradient(145deg, #1b3528, #12271d) !important;
+  color: #edf4e9 !important;
+  border: 1px solid rgba(181, 220, 139, .17) !important;
+  border-radius: 18px !important;
+}
+.help-card h1, .help-card h2, .help-card h3,
+.support-card h1, .support-card h2, .support-card h3,
+.guide-card h1, .guide-card h2, .guide-card h3,
+.step-card h1, .step-card h2, .step-card h3,
+.help-content h1, .help-content h2, .help-content h3 {
+  color: #f2f6ee !important;
+}
+.help-card p, .support-card p, .guide-card p, .step-card p,
+.help-content p, .support-guide p, .instruction-card p {
+  color: #c0cebd !important;
+}
+
+/* Stronger, consistent typography and visible muted text. */
+.dash, .dash p, .dash li, .dash label { color: #dce7d9; }
+.dash-head h1, .dash h1, .dash h2, .dash h3 { color: #f3f6ef !important; }
+.dash-head p, .dash .muted { color: #b4c3b5 !important; }
+
+@media (max-width: 760px) {
+  .portal { grid-template-columns: minmax(0, 1fr) !important; }
+  .portal > .sidebar { width: 100% !important; padding: 12px !important; }
+}
+
+
+/* =====================================================
+   AGRILEDGER — PRICE INSIGHTS COLOR CORRECTION
+   Matches the forest-green dashboard theme
+   ===================================================== */
+
+/* Main price page */
+#main-content .price-page {
+    background: transparent !important;
+    color: #F3F6ED !important;
+}
+
+/* Search form panel */
+#main-content .price-page .price-search {
+    background: linear-gradient(
+        145deg,
+        #203A2B,
+        #172D20
+    ) !important;
+
+    color: #F3F6ED !important;
+    border: 1px solid rgba(185, 223, 145, 0.25) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22) !important;
+}
+
+/* Search form heading */
+#main-content .price-page .price-search h2 {
+    color: #F3F6ED !important;
+    font-family: "Manrope", sans-serif !important;
+    font-weight: 800 !important;
+}
+
+/* Form labels */
+#main-content .price-page .price-search label {
+    color: #E8EFE2 !important;
+    font-weight: 700 !important;
+}
+
+/* Crop and market input fields */
+#main-content .price-page .price-search input,
+#main-content .price-page .price-search select {
+    background: #0D2117 !important;
+    color: #F3F6ED !important;
+    border: 1px solid #557354 !important;
+    border-radius: 11px !important;
+}
+
+/* Input placeholder text */
+#main-content .price-page .price-search input::placeholder {
+    color: #AFC2A7 !important;
+    opacity: 1 !important;
+}
+
+/* Input focus */
+#main-content .price-page .price-search input:focus,
+#main-content .price-page .price-search select:focus {
+    border-color: #B9DF91 !important;
+    box-shadow: 0 0 0 3px rgba(185, 223, 145, 0.15) !important;
+    outline: none !important;
+}
+
+/* Search button */
+#main-content .price-page .price-search button {
+    background: linear-gradient(
+        135deg,
+        #34764A,
+        #245B39
+    ) !important;
+
+    color: #FFFFFF !important;
+    border: 1px solid rgba(185, 223, 145, 0.3) !important;
+    border-radius: 11px !important;
+    font-weight: 800 !important;
+}
+
+#main-content .price-page .price-search button:hover {
+    background: linear-gradient(
+        135deg,
+        #478957,
+        #2F7045
+    ) !important;
+
+    color: #FFFFFF !important;
+}
+
+/* Price Information heading outside the panel */
+#main-content .price-page .price-result h2 {
+    color: #F3F6ED !important;
+    font-family: "Manrope", sans-serif !important;
+}
+
+/* Empty search result panel */
+#main-content .price-page .price-empty {
+    background: linear-gradient(
+        145deg,
+        #203A2B,
+        #172D20
+    ) !important;
+
+    color: #F3F6ED !important;
+    border: 1px solid rgba(185, 223, 145, 0.25) !important;
+    border-radius: 18px !important;
+}
+
+/* Empty result heading and description */
+#main-content .price-page .price-empty h3 {
+    color: #F3F6ED !important;
+}
+
+#main-content .price-page .price-empty p {
+    color: #C4D2BE !important;
+}
+
+/* Price result cards */
+#main-content .price-page .price-card {
+    background: linear-gradient(
+        145deg,
+        #203A2B,
+        #172D20
+    ) !important;
+
+    color: #F3F6ED !important;
+    border: 1px solid rgba(185, 223, 145, 0.22) !important;
+    border-radius: 18px !important;
+}
+
+#main-content .price-page .price-card h3 {
+    color: #F3F6ED !important;
+}
+
+#main-content .price-page .price-value {
+    color: #B9DF91 !important;
+    font-family: "Manrope", sans-serif !important;
+    font-weight: 800 !important;
+}
+
+#main-content .price-page .price-label {
+    color: #C4D2BE !important;
+}
+
+/* Price notice */
+#main-content .price-page .price-notice {
+    background: #3B3320 !important;
+    color: #FFF0C8 !important;
+    border-left: 5px solid #E1C78E !important;
+    border-radius: 12px !important;
+}
+
+#main-content .price-page .price-notice strong {
+    color: #FFF0C8 !important;
+}
+
+/* Back to dashboard link */
+#main-content .price-page .price-back {
+    color: #B9DF91 !important;
+    font-weight: 700 !important;
+}
+
+#main-content .price-page .price-back:hover {
+    color: #F3F6ED !important;
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+    #main-content .price-page .price-search,
+    #main-content .price-page .price-card,
+    #main-content .price-page .price-empty {
+        padding: 20px !important;
+    }
+}
+
+
+/* ==========================================================
+   AGRILEDGER — AGREEMENT PAGE COLOR AND TEXT CORRECTION
+   White cards + forest-green headings + readable labels
+   ========================================================== */
+
+/* Agreement section cards */
+.agreement-section,
+.agreements-section,
+.document-section,
+.upload-section,
+.translation-section,
+.document-card {
+    background: #FFFFFF !important;
+    color: #183B29 !important;
+    border: 1px solid #E1E9DF !important;
+    border-radius: 18px !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10) !important;
+    padding: 30px !important;
+}
+
+/* Main section headings */
+.agreement-section h1,
+.agreement-section h2,
+.agreement-section h3,
+.agreements-section h1,
+.agreements-section h2,
+.agreements-section h3,
+.document-section h1,
+.document-section h2,
+.document-section h3,
+.upload-section h1,
+.upload-section h2,
+.upload-section h3,
+.translation-section h1,
+.translation-section h2,
+.translation-section h3,
+.document-card h1,
+.document-card h2,
+.document-card h3 {
+    color: #17452D !important;
+    font-family: "Manrope", sans-serif !important;
+    font-weight: 800 !important;
+}
+
+/* Section descriptions and normal text */
+.agreement-section p,
+.agreements-section p,
+.document-section p,
+.upload-section p,
+.translation-section p,
+.document-card p {
+    color: #607365 !important;
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1.8 !important;
+}
+
+/* Form labels — make them clearly visible */
+.agreement-section label,
+.agreements-section label,
+.document-section label,
+.upload-section label,
+.translation-section label,
+.document-card label {
+    color: #214B32 !important;
+    font-size: 15px !important;
+    font-weight: 750 !important;
+    display: block;
+    margin-bottom: 10px !important;
+}
+
+/* Dropdowns, text inputs and textareas */
+.agreement-section input:not([type="checkbox"]):not([type="radio"]),
+.agreement-section select,
+.agreement-section textarea,
+.agreements-section input:not([type="checkbox"]):not([type="radio"]),
+.agreements-section select,
+.agreements-section textarea,
+.document-section input:not([type="checkbox"]):not([type="radio"]),
+.document-section select,
+.document-section textarea,
+.upload-section input:not([type="checkbox"]):not([type="radio"]),
+.upload-section select,
+.upload-section textarea,
+.translation-section input:not([type="checkbox"]):not([type="radio"]),
+.translation-section select,
+.translation-section textarea {
+    background: #14291D !important;
+    color: #FFFFFF !important;
+    border: 1px solid #55745A !important;
+    border-radius: 11px !important;
+    min-height: 48px !important;
+    padding: 12px 16px !important;
+    font-family: "DM Sans", sans-serif !important;
+    font-size: 15px !important;
+}
+
+/* Input placeholders */
+.agreement-section input::placeholder,
+.agreement-section textarea::placeholder,
+.agreements-section input::placeholder,
+.document-section input::placeholder,
+.upload-section input::placeholder,
+.translation-section input::placeholder {
+    color: #B8C8B8 !important;
+    opacity: 1 !important;
+}
+
+/* Dropdown options */
+.agreement-section select option,
+.agreements-section select option,
+.document-section select option,
+.upload-section select option,
+.translation-section select option {
+    background: #FFFFFF !important;
+    color: #183B29 !important;
+}
+
+/* Focus effect */
+.agreement-section input:focus,
+.agreement-section select:focus,
+.agreement-section textarea:focus,
+.agreements-section input:focus,
+.agreements-section select:focus,
+.document-section input:focus,
+.document-section select:focus,
+.upload-section input:focus,
+.upload-section select:focus,
+.translation-section input:focus,
+.translation-section select:focus {
+    border-color: #39804D !important;
+    box-shadow: 0 0 0 3px rgba(57, 128, 77, 0.15) !important;
+    outline: none !important;
+}
+
+/* File upload fields */
+.agreement-section input[type="file"],
+.agreements-section input[type="file"],
+.document-section input[type="file"],
+.upload-section input[type="file"],
+.translation-section input[type="file"] {
+    background: #14291D !important;
+    color: #FFFFFF !important;
+    border: 1px solid #55745A !important;
+    padding: 15px !important;
+}
+
+/* File chooser button */
+.agreement-section input[type="file"]::file-selector-button,
+.agreements-section input[type="file"]::file-selector-button,
+.document-section input[type="file"]::file-selector-button,
+.upload-section input[type="file"]::file-selector-button,
+.translation-section input[type="file"]::file-selector-button {
+    background: #F3F6ED !important;
+    color: #183B29 !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+}
+
+/* Upload and translate buttons */
+.agreement-section button,
+.agreements-section button,
+.document-section button,
+.upload-section button,
+.translation-section button {
+    background: linear-gradient(
+        135deg,
+        #3F8050,
+        #245B39
+    ) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #4F8A58 !important;
+    border-radius: 50px !important;
+    padding: 13px 27px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 9px 22px rgba(36, 91, 57, 0.20) !important;
+}
+
+.agreement-section button:hover,
+.agreements-section button:hover,
+.document-section button:hover,
+.upload-section button:hover,
+.translation-section button:hover {
+    background: linear-gradient(
+        135deg,
+        #4D925C,
+        #2F7045
+    ) !important;
+    transform: translateY(-2px);
+}
+
+/* Lists and other text */
+.agreement-section li,
+.agreements-section li,
+.document-section li,
+.upload-section li,
+.translation-section li {
+    color: #526B59 !important;
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) {
+    .agreement-section,
+    .agreements-section,
+    .document-section,
+    .upload-section,
+    .translation-section,
+    .document-card {
+        padding: 20px !important;
+    }
+}

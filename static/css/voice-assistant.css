@@ -1,0 +1,180 @@
+/* AgriLedger Voice Assistant — isolated styles */
+#agriVoiceWidget.agri-voice-widget {
+    position: fixed;
+    right: 24px;
+    bottom: 22px;
+    z-index: 99999;
+    font-family: "DM Sans", sans-serif;
+}
+
+#agriVoicePanel.agri-voice-panel {
+    display: block;
+    width: 340px;
+    max-width: calc(100vw - 28px);
+    margin-bottom: 14px;
+    padding: 22px;
+    color: #edf3e8;
+    background: linear-gradient(145deg, rgba(35,55,41,.98), rgba(18,32,23,.99));
+    border: 1px solid rgba(194,218,184,.22);
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.38);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+#agriVoicePanel[hidden] { display: none !important; }
+
+.agri-voice-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.agri-voice-heading h3 {
+    margin: 0 0 7px;
+    color: #edf3e8;
+    font: 800 18px/1.3 "Manrope", sans-serif;
+}
+
+.agri-voice-heading p {
+    margin: 0;
+    color: #b4c2b0;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+#agriVoicePanel .agri-voice-close {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(194,218,184,.2);
+    border-radius: 50%;
+    color: #edf3e8;
+    background: rgba(255,255,255,.07);
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.agri-voice-language { margin-bottom: 16px; }
+
+.agri-voice-language label {
+    display: block;
+    margin-bottom: 7px;
+    color: #dcebd6;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#agriVoiceLanguage {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid rgba(194,218,184,.25);
+    border-radius: 10px;
+    outline: none;
+    color: #fff;
+    background: #293e2e;
+    font: 600 14px "DM Sans", sans-serif;
+    color-scheme: dark;
+}
+
+#agriVoiceLanguage:focus-visible {
+    outline: 2px solid #a5cd83;
+    outline-offset: 2px;
+}
+
+#agriVoiceLanguage option { color: #fff; background: #203328; }
+
+.agri-voice-language small {
+    display: block;
+    margin-top: 7px;
+    color: #aebead;
+    font-size: 11px;
+}
+
+.agri-voice-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+#agriVoicePanel .agri-voice-controls button {
+    min-width: 0;
+    padding: 11px 5px;
+    border: 1px solid rgba(194,218,184,.17);
+    border-radius: 10px;
+    color: #eaf2e5;
+    background: #293e2e;
+    font: 700 12px "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease, opacity .2s ease;
+}
+
+#agriVoicePanel .agri-voice-controls button:hover:not(:disabled) {
+    background: #385a3d;
+    transform: translateY(-2px);
+}
+
+#agriVoicePanel .agri-voice-controls button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+#agriVoicePanel .agri-voice-controls .agri-voice-read {
+    grid-column: 1 / -1;
+    padding: 13px;
+    color: #fff;
+    background: linear-gradient(135deg, #477f4e, #285e3a);
+    font-size: 14px;
+}
+
+#agriVoicePanel .agri-voice-controls .agri-voice-stop {
+    color: #ffc5bd;
+    background: rgba(125,49,49,.25);
+    border-color: rgba(255,150,140,.25);
+}
+
+#agriVoiceStatus {
+    display: block;
+    min-height: 34px;
+    margin-top: 14px;
+    color: #b5dc8b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+#agriVoiceToggle.agri-voice-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 14px 21px;
+    border: 1px solid rgba(190,222,170,.3);
+    border-radius: 50px;
+    color: #fff;
+    background: linear-gradient(135deg, #427a4b, #245b39);
+    box-shadow: 0 12px 30px rgba(0,0,0,.3);
+    font: 700 14px "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: transform .2s ease, filter .2s ease;
+}
+
+#agriVoiceToggle.agri-voice-toggle:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+@media (max-width: 480px) {
+    #agriVoiceWidget.agri-voice-widget { right: 12px; bottom: 14px; }
+    #agriVoicePanel.agri-voice-panel { width: min(340px, calc(100vw - 24px)); padding: 18px; }
+    #agriVoiceToggle.agri-voice-toggle { min-height: 46px; padding: 12px 17px; font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #agriVoicePanel *, #agriVoiceToggle { transition: none !important; animation: none !important; }
+}

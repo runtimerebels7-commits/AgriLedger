@@ -3253,20 +3253,28 @@ if (document.readyState === "loading") {
    ============================================================ */
 
 (function initializeGlobalVoiceAssistant() {
+    "use strict";
 
-    let assistantRunId = 0;
-    let activeAbortController = null;
-    let activePlaybackCleanup = null;
+    let runId = 0;
+    let controller = null;
+    let audio = null;
+    let audioUrl = null;
+    let paused = false;
+    let resumeWaiters = [];
 
-    // Keep requests comfortably below Sarvam's text-size limits.
-    const MAX_TRANSLATION_CHARS = 1600;
-    const MAX_TTS_CHARS = 1600;
+    const MAX_TTS_CHARS = 1500;
+    const languageLabels = {
+        "en-IN": "English", "kn-IN": "Kannada", "hi-IN": "Hindi",
+        "ta-IN": "Tamil", "te-IN": "Telugu", "ml-IN": "Malayalam",
+        "mr-IN": "Marathi", "bn-IN": "Bengali"
+    };
 
-    function getAssistantElements() {
+    function getElements() {
         return {
-            widget: document.getElementById("agriVoiceWidget"),
             panel: document.getElementById("agriVoicePanel"),
             toggle: document.getElementById("agriVoiceToggle"),
+            close: document.getElementById("agriVoiceClose"),
+            language: document.getElementById("agriVoiceLanguage"),
             read: document.getElementById("agriVoiceRead"),
             pause: document.getElementById("agriVoicePause"),
             resume: document.getElementById("agriVoiceResume"),
@@ -3275,363 +3283,318 @@ if (document.readyState === "loading") {
         };
     }
 
-    function setAssistantStatus(message) {
-        const elements = getAssistantElements();
-        if (elements.status) elements.status.textContent = message;
+    function getSelectedLanguage() {
+        const select = getElements().language;
+        const value = select?.value || getCurrentLanguage();
+        return languageLabels[value] ? value : "en-IN";
     }
 
-    function splitTextIntoChunks(text, maxLength) {
-        const cleanText = String(text || "").replace(/\s+/g, " ").trim();
-        if (!cleanText) return [];
+    function status(message) {
+        const node = getElements().status;
+        if (node) node.textContent = message;
+    }
 
-        const sentences = cleanText.match(/[^.!?।]+[.!?।]?/g) || [cleanText];
+    function splitIntoChunks(value, limit) {
+        const text = String(value || "").replace(/\s+/g, " ").trim();
+        if (!text) return [];
+        const sentences = text.match(/[^.!?।]+[.!?।]?/g) || [text];
         const chunks = [];
         let current = "";
 
         for (let sentence of sentences) {
             sentence = sentence.trim();
-            if (!sentence) continue;
-
-            // Break exceptionally long sentences without losing any text.
-            while (sentence.length > maxLength) {
-                if (current) {
-                    chunks.push(current);
-                    current = "";
-                }
-                chunks.push(sentence.slice(0, maxLength));
-                sentence = sentence.slice(maxLength);
+            while (sentence.length > limit) {
+                if (current) chunks.push(current);
+                current = "";
+                let cut = sentence.lastIndexOf(" ", limit);
+                if (cut < limit * 0.5) cut = limit;
+                chunks.push(sentence.slice(0, cut).trim());
+                sentence = sentence.slice(cut).trim();
             }
-
             if (!sentence) continue;
-
-            if (current.length + sentence.length + 1 > maxLength) {
+            if ((current + " " + sentence).trim().length > limit) {
                 if (current) chunks.push(current);
                 current = sentence;
             } else {
-                current = current ? current + " " + sentence : sentence;
+                current = (current + " " + sentence).trim();
             }
         }
-
         if (current) chunks.push(current);
         return chunks;
     }
 
-    function getImportantPageText() {
-        // Prefer the shared page content container; fall back to main/body
-        // for dashboards that use a different template structure.
+    function getVisiblePageText() {
         const source = document.querySelector("#main-content") ||
-            document.querySelector("main") ||
-            document.body;
+            document.querySelector("main") || document.body;
+        if (!source) return "";
 
-        if (!source) return document.title || "Welcome to AgriLedger.";
+        const copy = source.cloneNode(true);
+        copy.querySelectorAll(
+            "script,style,noscript,button,input,select,textarea,option," +
+            "audio,video,iframe,[aria-hidden='true'],[hidden],.no-voice," +
+            "[data-no-voice],#agriVoiceWidget"
+        ).forEach(node => node.remove());
 
-        const content = source.cloneNode(true);
-        content.querySelectorAll([
-            "script", "style", "noscript", "button", "input", "select",
-            "textarea", "option", "video", "audio", "iframe",
-            "[aria-hidden='true']", "[hidden]", ".no-voice",
-            "[data-no-voice]", "#agriVoiceWidget"
-        ].join(",")).forEach(element => element.remove());
-
-        content.querySelectorAll("*").forEach(element => {
-            const style = window.getComputedStyle(element);
-            if (style.display === "none" || style.visibility === "hidden") {
-                element.remove();
-            }
+        copy.querySelectorAll("*").forEach(node => {
+            const css = getComputedStyle(node);
+            if (css.display === "none" || css.visibility === "hidden") node.remove();
         });
 
-        const pageText = (content.innerText || content.textContent || "")
+        return (copy.innerText || copy.textContent || "")
             .replace(/\s+/g, " ")
             .replace(/\s+([.,!?;:])/g, "$1")
             .trim();
-
-        return pageText || document.title || "Welcome to AgriLedger.";
     }
 
-    async function postJson(url, payload, runId) {
-        if (runId !== assistantRunId) throw new Error("Reading stopped.");
+    async function getSpeechBlob(text, language, activeRun) {
+        if (activeRun !== runId) throw new Error("Reading stopped.");
 
-        const response = await fetch(url, {
+        const response = await fetch("/api/ai/speak", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "same-origin",
-            signal: activeAbortController ? activeAbortController.signal : undefined,
-            body: JSON.stringify(payload)
+            signal: controller?.signal,
+            body: JSON.stringify({ text: text, language: language })
         });
 
         if (!response.ok) {
-            let message = "Request failed (HTTP " + response.status + ").";
+            let message = "Speech request failed (HTTP " + response.status + ").";
             try {
-                const errorData = await response.json();
-                if (errorData && errorData.error) message = errorData.error;
-            } catch (_) {
-                // Keep the HTTP message when the server did not return JSON.
-            }
+                const data = await response.json();
+                if (data?.error) message = data.error;
+            } catch (_) {}
             throw new Error(message);
         }
 
-        return response;
-    }
-
-    async function translatePageText(text, targetLanguage, runId) {
-        // The page's source content is authored in English. English does not
-        // need a translation API call.
-        if (targetLanguage === "en-IN") return text;
-
-        const chunks = splitTextIntoChunks(text, MAX_TRANSLATION_CHARS);
-        const translatedChunks = [];
-
-        for (let index = 0; index < chunks.length; index++) {
-            if (runId !== assistantRunId) throw new Error("Reading stopped.");
-
-            setAssistantStatus(
-                "Translating page: " + (index + 1) + " of " + chunks.length
-            );
-
-            const response = await postJson("/api/ai/translate", {
-                text: chunks[index],
-                source_language: "en-IN",
-                target_language: targetLanguage
-            }, runId);
-
-            const data = await response.json();
-            if (!data || !data.translated_text) {
-                throw new Error((data && data.error) || "Translation returned no text.");
-            }
-            translatedChunks.push(data.translated_text);
+        const type = response.headers.get("content-type") || "";
+        if (!type.includes("audio/") && !type.includes("octet-stream")) {
+            let message = "Speech service did not return audio.";
+            try {
+                const data = await response.json();
+                if (data?.error) message = data.error;
+            } catch (_) {}
+            throw new Error(message);
         }
-
-        return translatedChunks.join(" ");
+        return response.blob();
     }
 
-    function playAudioAndWait(blob, runId) {
+    function waitIfPaused(activeRun) {
+        if (!paused) return Promise.resolve();
         return new Promise((resolve, reject) => {
-            if (runId !== assistantRunId) {
-                reject(new Error("Reading stopped."));
-                return;
-            }
-            if (!blob || !blob.size) {
-                reject(new Error("The voice service returned an empty audio file."));
-                return;
-            }
-
-            const audioUrl = URL.createObjectURL(blob);
-            const audio = new Audio(audioUrl);
-            let finished = false;
-            let resolvePlayback;
-            currentAudio = audio;
-            currentAudioUrl = audioUrl;
-
-            resolvePlayback = resolve;
-
-            const cleanup = (resolveIfStopped = false) => {
-                if (finished) return;
-                finished = true;
-                audio.onended = null;
-                audio.onerror = null;
-                audio.onabort = null;
-                audio.pause();
-                URL.revokeObjectURL(audioUrl);
-                if (currentAudio === audio) currentAudio = null;
-                if (currentAudioUrl === audioUrl) currentAudioUrl = null;
-                if (activePlaybackCleanup === cleanup) activePlaybackCleanup = null;
-                if (resolveIfStopped && resolvePlayback) resolvePlayback();
-            };
-
-            activePlaybackCleanup = () => cleanup(true);
-
-            audio.onended = () => {
-                cleanup();
-                resolve();
-            };
-            audio.onerror = () => {
-                cleanup();
-                reject(new Error("Audio playback failed. Check the Sarvam AI service."));
-            };
-            audio.onabort = () => {
-                cleanup();
-                resolve();
-            };
-
-            audio.play().catch(error => {
-                cleanup();
-                reject(error);
-            });
+            resumeWaiters.push({ resolve, reject, activeRun });
         });
     }
 
-    async function speakPageChunks(text, language, runId) {
-        const chunks = splitTextIntoChunks(text, MAX_TTS_CHARS);
+    function playBlob(blob, activeRun) {
+        return new Promise((resolve, reject) => {
+            if (activeRun !== runId) return reject(new Error("Reading stopped."));
+            if (!blob?.size) return reject(new Error("Sarvam returned empty audio."));
 
-        for (let index = 0; index < chunks.length; index++) {
-            if (runId !== assistantRunId) throw new Error("Reading stopped.");
+            audioUrl = URL.createObjectURL(blob);
+            audio = new Audio(audioUrl);
+            let done = false;
 
-            setAssistantStatus(
-                "Reading section " + (index + 1) + " of " + chunks.length
-            );
+            const cleanup = () => {
+                if (done) return;
+                done = true;
+                if (audio) {
+                    audio.onended = null;
+                    audio.onerror = null;
+                }
+                audio = null;
+                if (audioUrl) URL.revokeObjectURL(audioUrl);
+                audioUrl = null;
+            };
 
-            const response = await postJson("/api/ai/speak", {
-                text: chunks[index],
-                language: language
-            }, runId);
-
-            const contentType = response.headers.get("content-type") || "";
-            if (!contentType.includes("audio/") &&
-                !contentType.includes("application/octet-stream")) {
-                let message = "The voice service did not return an audio file.";
-                try {
-                    const data = await response.json();
-                    if (data && data.error) message = data.error;
-                } catch (_) { /* Keep the default message. */ }
-                throw new Error(message);
-            }
-
-            const audioBlob = await response.blob();
-            await playAudioAndWait(audioBlob, runId);
-        }
+            audio.onended = () => { cleanup(); resolve(); };
+            audio.onerror = () => {
+                cleanup();
+                reject(new Error("Audio playback failed. Please try again."));
+            };
+            audio.play().catch(error => { cleanup(); reject(error); });
+        });
     }
 
-    async function readEntirePage() {
-        const elements = getAssistantElements();
-        const pageText = getImportantPageText();
+    async function readPage() {
+        stopReading(false);
+        const activeRun = ++runId;
+        controller = new AbortController();
+        paused = false;
 
-        if (!pageText) {
-            setAssistantStatus("No readable page information was found.");
+        const language = getSelectedLanguage();
+        const languageName = languageLabels[language];
+        const text = getVisiblePageText();
+        const chunks = splitIntoChunks(text, MAX_TTS_CHARS);
+
+        if (!chunks.length) {
+            status("No readable page text was found.");
             return;
         }
 
-        // Cancel any earlier page-reading operation before starting a new one.
-        stopGlobalAssistant(false);
-        const runId = ++assistantRunId;
-        activeAbortController = new AbortController();
-
-        if (elements.read) {
-            elements.read.disabled = true;
-            elements.read.textContent = "Preparing audio...";
+        const readButton = getElements().read;
+        if (readButton) {
+            readButton.disabled = true;
+            readButton.textContent = "Preparing audio...";
         }
 
         try {
-            const selectedLanguage = getCurrentLanguage();
-            const languageName = languageNames[selectedLanguage] || "selected language";
+            /*
+             * The website language manager has already translated visible
+             * page elements. Do not translate the translated page again
+             * while claiming its source language is English. Send the
+             * currently displayed text to Sarvam TTS using the same locale.
+             */
+            for (let i = 0; i < chunks.length; i++) {
+                if (activeRun !== runId) return;
+                await waitIfPaused(activeRun);
+                if (activeRun !== runId) return;
 
-            setAssistantStatus("Preparing page information...");
-            const translatedText = await translatePageText(
-                pageText,
-                selectedLanguage,
-                runId
-            );
+                status("Generating " + languageName + " audio (" +
+                    (i + 1) + "/" + chunks.length + ")...");
 
-            if (runId !== assistantRunId) return;
-            setAssistantStatus("Preparing " + languageName + " voice...");
+                const blob = await getSpeechBlob(chunks[i], language, activeRun);
+                if (activeRun !== runId) return;
+                await waitIfPaused(activeRun);
+                if (activeRun !== runId) return;
 
-            await speakPageChunks(translatedText, selectedLanguage, runId);
-
-            if (runId === assistantRunId) {
-                setAssistantStatus("Finished reading this page.");
+                status("Speaking in " + languageName + " (" +
+                    (i + 1) + "/" + chunks.length + ")...");
+                await playBlob(blob, activeRun);
             }
+            if (activeRun === runId) status("Finished reading in " + languageName + ".");
         } catch (error) {
-            if (runId !== assistantRunId || error.name === "AbortError") return;
-            console.error("AgriLedger page voice assistant error:", error);
-            setAssistantStatus("Unable to read this page: " + error.message);
+            if (activeRun !== runId || error.name === "AbortError") return;
+            console.error("AgriLedger voice assistant error:", error);
+            status("Unable to read page: " + error.message);
         } finally {
-            if (runId === assistantRunId) {
-                activeAbortController = null;
-                if (elements.read) {
-                    elements.read.disabled = false;
-                    elements.read.textContent = "▶ Read This Page";
+            if (activeRun === runId) {
+                controller = null;
+                paused = false;
+                if (readButton) {
+                    readButton.disabled = false;
+                    readButton.textContent = "▶ Read This Page";
                 }
             }
         }
     }
 
-    function stopGlobalAssistant(showStatus = true) {
-        // Invalidate all in-flight translation/TTS requests.
-        assistantRunId++;
-
-        if (activeAbortController) {
-            activeAbortController.abort();
-            activeAbortController = null;
+    function pauseReading() {
+        if (!controller && !audio) {
+            status("Press Read This Page first.");
+            return;
         }
-
-        if (activePlaybackCleanup) activePlaybackCleanup();
-        stopAgriLedgerAudio();
-
-        const elements = getAssistantElements();
-        if (elements.read) {
-            elements.read.disabled = false;
-            elements.read.textContent = "▶ Read This Page";
-        }
-        if (showStatus) setAssistantStatus("Reading stopped.");
+        paused = true;
+        if (audio && !audio.paused) audio.pause();
+        status("Paused. Press Resume to continue.");
     }
 
-    function pauseGlobalAssistant() {
-        if (currentAudio && !currentAudio.paused) {
-            currentAudio.pause();
-            setAssistantStatus("Audio paused.");
-        } else {
-            setAssistantStatus("No audio is currently playing.");
+    function resumeReading() {
+        if (!paused) {
+            status("The reading is not paused.");
+            return;
         }
-    }
-
-    function resumeGlobalAssistant() {
-        if (currentAudio && currentAudio.paused) {
-            currentAudio.play()
-                .then(() => setAssistantStatus("Reading resumed."))
-                .catch(error => {
-                    console.error("Voice resume error:", error);
-                    setAssistantStatus("Unable to resume audio.");
-                });
-        } else {
-            setAssistantStatus("No paused audio is available.");
-        }
-    }
-
-    function initializeAssistantButtons() {
-        const elements = getAssistantElements();
-        if (!elements.widget) return;
-
-        if (elements.toggle && elements.toggle.dataset.assistantBound !== "true") {
-            elements.toggle.dataset.assistantBound = "true";
-            elements.toggle.addEventListener("click", () => {
-                if (!elements.panel) return;
-                const isHidden = elements.panel.hidden ||
-                    elements.panel.style.display === "none";
-                elements.panel.hidden = !isHidden;
-                elements.panel.style.display = isHidden ? "block" : "none";
+        paused = false;
+        if (audio?.paused) {
+            audio.play().catch(error => {
+                console.error(error);
+                status("Could not resume audio. Please press Read This Page.");
             });
         }
+        const waiting = resumeWaiters;
+        resumeWaiters = [];
+        waiting.forEach(item => {
+            if (item.activeRun === runId) item.resolve();
+            else item.reject(new Error("Reading stopped."));
+        });
+        status("Resuming reading...");
+    }
 
-        if (elements.read && elements.read.dataset.assistantBound !== "true") {
-            elements.read.dataset.assistantBound = "true";
-            elements.read.addEventListener("click", readEntirePage);
+    function stopReading(showStatus = true) {
+        runId++;
+        paused = false;
+        if (controller) {
+            controller.abort();
+            controller = null;
         }
-        if (elements.pause && elements.pause.dataset.assistantBound !== "true") {
-            elements.pause.dataset.assistantBound = "true";
-            elements.pause.addEventListener("click", pauseGlobalAssistant);
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.onended = null;
+            audio.onerror = null;
+            audio = null;
         }
-        if (elements.resume && elements.resume.dataset.assistantBound !== "true") {
-            elements.resume.dataset.assistantBound = "true";
-            elements.resume.addEventListener("click", resumeGlobalAssistant);
+        if (audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+            audioUrl = null;
         }
-        if (elements.stop && elements.stop.dataset.assistantBound !== "true") {
-            elements.stop.dataset.assistantBound = "true";
-            elements.stop.addEventListener("click", () => stopGlobalAssistant(true));
+        const waiting = resumeWaiters;
+        resumeWaiters = [];
+        waiting.forEach(item => item.reject(new Error("Reading stopped.")));
+
+        const readButton = getElements().read;
+        if (readButton) {
+            readButton.disabled = false;
+            readButton.textContent = "▶ Read This Page";
         }
+        if (showStatus) status("Reading stopped.");
+    }
+
+    function setVoiceLanguage(language) {
+        const select = getElements().language;
+        if (!select) return;
+        const safeLanguage = languageLabels[language] ? language : "en-IN";
+        select.value = safeLanguage;
+        stopReading(false);
+        status("Voice language: " + languageLabels[safeLanguage] + ".");
+    }
+
+    function showPanel(show) {
+        const controls = getElements();
+        if (!controls.panel || !controls.toggle) return;
+        controls.panel.hidden = !show;
+        controls.panel.setAttribute("aria-hidden", String(!show));
+        controls.toggle.setAttribute("aria-expanded", String(show));
+    }
+
+    function initialize() {
+        const controls = getElements();
+        if (!controls.panel || controls.panel.dataset.voiceBound === "true") return;
+        controls.panel.dataset.voiceBound = "true";
+
+        const savedLanguage = typeof getCurrentLanguage === "function"
+            ? getCurrentLanguage() : "en-IN";
+        if (controls.language && languageLabels[savedLanguage]) {
+            controls.language.value = savedLanguage;
+        }
+
+        controls.toggle?.addEventListener("click", () => showPanel(controls.panel.hidden));
+        controls.close?.addEventListener("click", () => showPanel(false));
+        controls.read?.addEventListener("click", readPage);
+        controls.pause?.addEventListener("click", pauseReading);
+        controls.resume?.addEventListener("click", resumeReading);
+        controls.stop?.addEventListener("click", () => stopReading(true));
+
+        controls.language?.addEventListener("change", event => {
+            const language = event.target.value;
+            stopReading(false);
+            if (typeof applyWebsiteLanguage === "function" &&
+                getCurrentLanguage() !== language) {
+                applyWebsiteLanguage(language);
+            }
+            status("Voice language: " + languageLabels[language] + ".");
+        });
+
+        document.addEventListener("agriledger:languageChanged", event => {
+            const language = event.detail?.language || getCurrentLanguage();
+            setVoiceLanguage(language);
+        });
+
+        status("Ready. Voice follows the selected website language.");
     }
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initializeAssistantButtons);
+        document.addEventListener("DOMContentLoaded", initialize, { once: true });
     } else {
-        initializeAssistantButtons();
+        initialize();
     }
-
-    // Stop the current reading when the user changes the selected language.
-    document.addEventListener("agriledger:languageChanged", event => {
-        stopGlobalAssistant(false);
-        const selectedLanguage = (event.detail && event.detail.language) || getCurrentLanguage();
-        setAssistantStatus(
-            "Language selected: " + (languageNames[selectedLanguage] || "English")
-        );
-    });
-
 })();

@@ -26,6 +26,9 @@
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/premium-theme.css') }}">
 
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/voice-assistant.css') }}">
+
     <style>
         /* ==========================================
            AGRILEDGER GLOBAL DESIGN SYSTEM
@@ -86,142 +89,7 @@
            GLOBAL VOICE ASSISTANT
         ========================================== */
 
-        #agriVoiceWidget {
-            position: fixed;
-            right: 24px;
-            bottom: 22px;
-            z-index: 9999;
-            font-family: "DM Sans", sans-serif;
-        }
-
-        #agriVoiceToggle {
-            border: 1px solid rgba(190, 222, 170, 0.25);
-            border-radius: 50px;
-            background: linear-gradient(
-                135deg,
-                #427a4b,
-                #245b39
-            );
-            color: #ffffff;
-            padding: 15px 23px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.25s ease;
-        }
-
-        #agriVoiceToggle:hover {
-            transform: translateY(-3px);
-            background: linear-gradient(
-                135deg,
-                #518b58,
-                #2d6941
-            );
-            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
-        }
-
-        #agriVoicePanel {
-            display: none;
-            width: 310px;
-            margin-bottom: 14px;
-            padding: 23px;
-
-            background: linear-gradient(
-                145deg,
-                rgba(35, 55, 41, 0.98),
-                rgba(18, 32, 23, 0.98)
-            );
-
-            border: 1px solid var(--ag-border);
-            border-radius: 20px;
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
-
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        #agriVoicePanel.open {
-            display: block;
-            animation: voicePanelIn 0.25s ease;
-        }
-
-        @keyframes voicePanelIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #agriVoicePanel h3 {
-            margin: 0 0 10px;
-            color: #edf3e8;
-            font-family: "Manrope", sans-serif;
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-        #agriVoicePanel p {
-            color: #b4c2b0;
-            font-size: 13px;
-            line-height: 1.7;
-            margin-bottom: 18px;
-        }
-
-        .agri-voice-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .agri-voice-controls button {
-            border: 1px solid rgba(194, 218, 184, 0.12);
-            border-radius: 10px;
-            padding: 12px 9px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 13px;
-
-            background: #293e2e;
-            color: #eaf2e5;
-
-            transition: all 0.2s ease;
-        }
-
-        .agri-voice-controls button:hover {
-            background: #385a3d;
-            transform: translateY(-2px);
-        }
-
-        .agri-voice-controls #agriVoiceRead {
-            grid-column: span 2;
-            background: linear-gradient(
-                135deg,
-                #477f4e,
-                #285e3a
-            );
-            color: white;
-        }
-
-        .agri-voice-controls #agriVoiceStop {
-            background: rgba(125, 49, 49, 0.25);
-            color: #ffc5bd;
-            border-color: rgba(255, 150, 140, 0.18);
-        }
-
-        #agriVoiceStatus {
-            display: block;
-            margin-top: 15px;
-            color: #a5cd83;
-            font-size: 12px;
-            min-height: 18px;
-        }
-
-        /* ==========================================
+/* ==========================================
            ACCESSIBILITY AND RESPONSIVENESS
         ========================================== */
 
@@ -381,66 +249,52 @@
 
 
 <!-- GLOBAL FARMER VOICE ASSISTANT -->
-<div id="agriVoiceWidget">
-
-    <div id="agriVoicePanel"
-         role="region"
-         aria-label="AgriLedger Voice Assistant">
-
-        <h3 data-i18n="voice_assistant_title">
-            🔊 Farmer Voice Assistant
-        </h3>
-
-        <p data-i18n="voice_assistant_description">
-            Listen to the information on this page
-            in your selected language.
-        </p>
-
-        <div class="agri-voice-controls">
-
-            <button type="button"
-                    id="agriVoiceRead"
-                    data-i18n="voice_read_page">
-                ▶ Read This Page
-            </button>
-
-            <button type="button"
-                    id="agriVoicePause"
-                    data-i18n="voice_pause">
-                ⏸ Pause
-            </button>
-
-            <button type="button"
-                    id="agriVoiceResume"
-                    data-i18n="voice_resume">
-                ▶ Resume
-            </button>
-
-            <button type="button"
-                    id="agriVoiceStop"
-                    data-i18n="voice_stop">
-                ⏹ Stop
-            </button>
-
+<div id="agriVoiceWidget" class="agri-voice-widget">
+    <section id="agriVoicePanel"
+             class="agri-voice-panel"
+             role="region"
+             aria-label="AgriLedger Voice Assistant"
+             aria-hidden="true"
+             hidden>
+        <div class="agri-voice-heading">
+            <div>
+                <h3>🔊 AgriLedger Voice Assistant</h3>
+                <p>Listen to the visible page in your preferred language.</p>
+            </div>
+            <button type="button" id="agriVoiceClose"
+                    class="agri-voice-close" aria-label="Close">×</button>
         </div>
 
-        <span id="agriVoiceStatus"
-              aria-live="polite"
-              data-i18n="voice_ready">
-            Ready to read.
+        <div class="agri-voice-language">
+            <label for="agriVoiceLanguage">Voice language</label>
+            <select id="agriVoiceLanguage" aria-label="Choose voice language">
+                <option value="en-IN">English</option>
+                <option value="kn-IN">ಕನ್ನಡ — Kannada</option>
+                <option value="hi-IN">हिन्दी — Hindi</option>
+                <option value="ta-IN">தமிழ் — Tamil</option>
+                <option value="te-IN">తెలుగు — Telugu</option>
+                <option value="ml-IN">മലയാളം — Malayalam</option>
+                <option value="mr-IN">मराठी — Marathi</option>
+                <option value="bn-IN">বাংলা — Bengali</option>
+            </select>
+            <small>Automatically follows the website language.</small>
+        </div>
+
+        <div class="agri-voice-controls">
+            <button type="button" id="agriVoiceRead" class="agri-voice-read">▶ Read This Page</button>
+            <button type="button" id="agriVoicePause">Ⅱ Pause</button>
+            <button type="button" id="agriVoiceResume">▶ Resume</button>
+            <button type="button" id="agriVoiceStop" class="agri-voice-stop">■ Stop</button>
+        </div>
+        <span id="agriVoiceStatus" role="status" aria-live="polite">
+            Ready. Select a language and press Read This Page.
         </span>
+    </section>
 
-    </div>
-
-    <button type="button"
-            id="agriVoiceToggle"
-            aria-expanded="false"
-            aria-controls="agriVoicePanel"
-            aria-label="Listen to Page"
-            data-i18n="voice_listen_page">
+    <button type="button" id="agriVoiceToggle" class="agri-voice-toggle"
+            aria-expanded="false" aria-controls="agriVoicePanel">
         🔊 Listen to Page
     </button>
-
 </div>
 
 
